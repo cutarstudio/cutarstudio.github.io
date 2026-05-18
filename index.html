@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUT AR STUDIO | Barbería</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --bg-main: #0d0d0d; --bg-sec: #161616; --bg-card: #222222; --text-light: #ffffff; --text-muted: #999999; --accent: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-main); color: var(--text-light); line-height: 1.6; }
+        img { max-width: 100%; height: auto; display: block; }
+
+        /* Navbar */
+        nav { position: fixed; top: 0; width: 100%; background-color: black; backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 5%; z-index: 1000; border-bottom: 1px solid #333; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; z-index: 1001; }
+        .logo-img { height: 50px; width: auto; }
+        .logo-text { font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; color: var(--text-light); line-height: 1.2; }
+        .logo-text span { font-weight: 300; font-size: 0.9rem; display: block; letter-spacing: 4px; color: var(--text-muted); }
+        .nav-links { list-style: none; display: flex; align-items: center; gap: 2rem; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; transition: color 0.3s ease; }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* Autenticación */
+        .auth-container { display: flex; align-items: center; margin-left: 10px; position: relative; }
+        .btn-auth { background-color: transparent; color: var(--text-light); border: 1px solid var(--text-light); padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .btn-auth:hover { background-color: var(--text-light); color: var(--bg-main); }
+        
+        .user-profile { display: none; align-items: center; gap: 10px; background-color: var(--bg-sec); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid #333; cursor: pointer; transition: background 0.3s; }
+        .user-profile:hover { background-color: #222; }
+        .user-pic { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .user-name { font-size: 0.85rem; font-weight: 600; color: var(--text-light); pointer-events: none; }
+        .user-profile i { font-size: 0.8rem; color: var(--text-muted); pointer-events: none; }
+
+        /* Dropdown Reducido */
+        .dropdown-menu { display: none; position: absolute; top: 120%; right: 0; background-color: var(--bg-card); border: 1px solid #444; border-radius: 8px; width: 200px; flex-direction: column; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 1002; }
+        .dropdown-menu.active { display: flex; }
+        .dropdown-item { padding: 12px 15px; color: var(--text-light); text-decoration: none; border-bottom: 1px solid #333; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background 0.3s; }
+        .dropdown-item:hover { background-color: #333; }
+        .dropdown-item:last-child { border-bottom: none; color: #ff4d4d; }
+
+        .menu-toggle { display: none; color: var(--text-light); font-size: 1.8rem; cursor: pointer; z-index: 1001; }
+
+        /* Hero Section */
+        /* Hero Section (Fondo por defecto para pantallas anchas) */
+        .hero { 
+            height: 100vh; 
+            background: url('img/pc.JPG') center/cover no-repeat; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding-top: 280px; 
+        }
+        .hero h1 { font-size: clamp(3rem, 6vw, 6rem); font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem; }
+        .hero p { font-size: clamp(1rem, 2vw, 1.5rem); font-weight: 300; letter-spacing: 4px; color: white; margin-bottom: 2.5rem; }
+        
+        /* Botones Generales */
+        .btn { display: inline-flex; justify-content: center; align-items: center; gap: 10px; background-color: var(--accent); color: var(--bg-main); padding: 15px 35px; font-size: 1rem; font-weight: 800; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border: 2px solid var(--accent); transition: all 0.3s ease; cursor: pointer; border-radius: 5px; }
+        .btn:hover { background-color: transparent; color: var(--accent); }
+
+        /* Secciones */
+        section { padding: 100px 5%; }
+        .section-title { font-size: 2.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 3rem; text-align: center; }
+        
+        .historia { background-color: var(--bg-sec); display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .historia-text h2 { text-align: left; margin-bottom: 1.5rem; }
+        .historia-text p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 1.1rem; }
+        .historia-img img { border-radius: 5px; }
+        .historia-img video {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .servicios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .servicio-card { background-color: var(--bg-card); border-radius: 8px; overflow: hidden; transition: transform 0.3s ease; }
+        .servicio-card:hover { transform: translateY(-5px); }
+        .servicio-img { height: 200px; object-fit: cover; width: 100%; }
+        .servicio-info { padding: 2rem; }
+        .servicio-info h3 { font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .servicio-info p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; min-height: 45px; }
+        .servicio-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #444; padding-top: 1rem; }
+        .servicio-footer .duracion { font-size: 0.8rem; color: var(--text-muted); }
+        .servicio-footer .precio { font-size: 1.2rem; font-weight: 800; }
+        /* Permite que el texto se muestre completo al activarse */
+        .servicio-info p.expandido {
+            display: block !important;
+            -webkit-line-clamp: initial !important;
+            overflow: visible !important;
+        }
+
+        /* Indica visualmente que las tarjetas son interactivas */
+        .servicio-card {
+            cursor: pointer;
+        }
+        .galeria { background-color: var(--bg-sec); }
+        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .galeria-item { position: relative; overflow: hidden; aspect-ratio: 1 / 1; }
+        .galeria-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .galeria-item:hover img { transform: scale(1.05); }
+
+        .contacto-container { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; background-color: var(--bg-card); padding: 3rem; border-radius: 10px; }
+        .contacto-info h3 { font-size: 1.5rem; margin-bottom: 2rem; text-transform: uppercase; }
+        .info-item { display: flex; align-items: center; margin-bottom: 1.5rem; color: var(--text-muted); }
+        .info-item i { font-size: 1.5rem; color: var(--accent); margin-right: 1.5rem; width: 30px; text-align: center; }
+        .info-item a { color: var(--text-muted); text-decoration: none; transition: color 0.3s ease; }
+        .info-item a:hover { color: var(--accent); }
+        .mapa { background-color: #333; border-radius: 5px; overflow: hidden; width: 100%; height: 350px; display: block; }
+        .mapa iframe { width: 100%; height: 100%; border: 0; }
+
+        /* --- SECCIÓN DE RESEÑAS VIP (DORADO) --- */
+        .review-section { text-align: center; padding: 80px 5%; background: linear-gradient(135deg, #111 0%, #050505 100%); border-top: 2px solid #d4af37; border-bottom: 2px solid #d4af37; position: relative; }
+        .review-stars { color: #d4af37; font-size: 2rem; margin-bottom: 15px; letter-spacing: 5px; }
+        .review-section h2 { font-size: 2.5rem; text-transform: uppercase; margin-bottom: 15px; color: var(--text-light); }
+        .review-section h2 span { color: #d4af37; }
+        .review-section p { color: var(--text-muted); margin-bottom: 35px; font-size: 1.1rem; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.8; }
+        
+        .btn-gold-review { background-color: #d4af37; color: #000; border: 2px solid #d4af37; font-weight: 900; padding: 15px 40px; font-size: 1.1rem; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); border-radius: 5px; }
+        .btn-gold-review:hover { background-color: transparent; color: #d4af37; box-shadow: 0 0 30px rgba(212, 175, 55, 0.5); }
+
+        footer { text-align: center; padding: 2rem 5%; background-color: #000; color: var(--text-muted); font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            .historia, .contacto-container { grid-template-columns: 1fr; }
+            section { padding: 70px 5%; }
+            .section-title { font-size: 2rem; }
+            .menu-toggle { display: block; }
+            
+            .nav-links { position: fixed; top: 0; right: -100%; width: 100%; height: 100vh; background-color: black; flex-direction: column; justify-content: flex-start; padding-top: 100px; align-items: center; transition: right 0.4s ease; overflow-y: auto; }
+            .nav-links.active { right: 0; }
+            .nav-links li { margin: 10px 0; width: 100%; text-align: center; }
+            .nav-links a { font-size: 1.2rem; } 
+            
+            .auth-container { margin-top: 10px; margin-left: 0; flex-direction: column; }
+            .user-profile { margin: 0 auto; justify-content: center; }
+            .dropdown-menu { position: relative; top: 0; right: 0; transform: none; width: 80%; max-width: 250px; margin: 10px auto 0; box-shadow: none; border: 1px solid #333; }
+        }
+        /* Cambiar el fondo en pantallas verticales o móviles */
+        @media (max-width: 768px), (orientation: portrait) {
+            .hero {
+                background: url('img/movil.JPG') center/cover no-repeat;
+            }
+        }
+        @media (max-width: 600px) {
+            .servicios-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .servicio-img { height: 120px; }
+            .servicio-info { padding: 12px; }
+            .servicio-info h3 { font-size: 0.85rem; }
+            .servicio-info p { font-size: 0.75rem; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: auto; }
+            .servicio-footer { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .servicio-footer .precio { font-size: 1rem; }
+            .galeria-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .mapa { height: 250px; }
+            .review-section h2 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="logo">
+            <img src="logo.png" alt="CUT AR STUDIO" class="logo-img">
+            <div class="logo-text">CUT AR <span>STUDIO</span></div>
+        </a>
+        <div class="menu-toggle" id="mobile-menu"><i class="fa-solid fa-bars"></i></div>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#historia">Nosotros</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#galeria">Galería</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+            
+            <li class="auth-container">
+                <button id="btn-login" class="btn-auth"><i class="fa-brands fa-google"></i> Iniciar Sesión</button>
+                <div id="user-profile" class="user-profile">
+                    <img id="user-pic" src="" alt="Perfil" class="user-pic">
+                    <span id="user-name" class="user-name"></span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <div class="dropdown-item" id="btn-panel"><i class="fa-regular fa-calendar-check"></i> Panel de Reservas</div>
+                    <div class="dropdown-item" id="menu-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <section id="inicio" class="hero">
+        <h1>Life is good</h1>
+        <p>WHEN YOU ARE HERE</p>
+        <button class="btn btn-agendar">Agendar Ahora</button>
+    </section>
+
+    <section id="historia" class="historia">
+        <div class="historia-text">
+            <h2 class="section-title">Nuestra Historia</h2>
+            <p>Desde chico, la barbería siempre fue parte de mi interés. Soy Alejandro Armijo, fundador de Cut AR Studio, y comenzamos en pandemia desde casa, atendiendo a amigos y familiares, aprendiendo y perfeccionando cada corte.</p>
+            <p>Con el tiempo, la dedicación nos permitió crecer, sumar clientes y formar un equipo con la misma pasión por este rubro.</p>
+            <p>Hoy, Cut AR Studio es más que una barbería: somos un equipo comprometido con entregar estilo, calidad y una experiencia única en cada servicio.</p>
+        </div>
+        <div class="historia-img">
+            <video id="video-historia" src="img/historia.mp4" autoplay muted loop playsinline poster="img/luz.jpg"></video>
+        </div>
+    </section>
+
+    <section id="servicios">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <div class="servicios-grid">
+            <div class="servicio-card">
+                <img src="img/corte2.JPG" alt="Corte" class="servicio-img">
+                <div class="servicio-info">
+                    <h3>Corte</h3>
+                    <p>Corte tradicional, degradado, fade, etc. adaptado a tu estilo personal. Incluye lineas y perfilado de cejas, si lo desea.</p>
+                    <div class="servicio-footer"><span class="duracion"><i class="fa-regular fa-clock"></i> 30 min</span><span class="precio">$12.000</span></div>
+                </div>
+            </div>
+            <div class="servicio-card">
+                <img src="img/barbita.jpg" alt="Perfilado de Barba" class="servicio-img">
+                <div class="servicio-info">
+                    <h3>Perfilado de Barba</h3>
+                    <p>Corte y perfilado de barba, alineación precisa con navaja y aceites.</p>
+                    <div class="servicio-footer"><span class="duracion"><i class="fa-regular fa-clock"></i> 15 min</span><span class="precio">$10.000</span></div>
+                </div>
+            </div>
+            <div class="servicio-card">
+                <img src="img/c+b.JPG" alt="Fade & Precision" class="servicio-img">
+                <div class="servicio-info">
+                    <h3>Corte + Barba</h3>
+                    <p>La experiencia clásica completa para el cuidado de tu cabello y barba.</p>
+                    <div class="servicio-footer"><span class="duracion"><i class="fa-regular fa-clock"></i> 45 min</span><span class="precio">$20.000</span></div>
+                </div>
+            </div>
+            <div class="servicio-card">
+                <img src="img/asesoria.JPG" alt="Fade & Precision" class="servicio-img">
+                <div class="servicio-info">
+                    <h3>Corte + Asesoria</h3>
+                    <p>La experiencia de un Corte sumado a una Asesoria profesional.</p>
+                    <div class="servicio-footer"><span class="duracion"><i class="fa-regular fa-clock"></i> 40 min</span><span class="precio">$15.000</span></div>
+                </div>
+            </div>
+            <div class="servicio-card">
+                <img src="img/full.png" alt="Servicio Premium" class="servicio-img">
+                <div class="servicio-info">
+                    <h3>Full Premium Experience</h3>
+                    <p>Experiencia Completa, Asesoria profesional + Corte + Perfilado y Corte de Barba + Lavado y peinado final.</p>
+                    <div class="servicio-footer"><span class="duracion"><i class="fa-regular fa-clock"></i> 1 hr</span><span class="precio">$25.000</span></div>
+                </div>
+            </div>
+            <div class="servicio-card">
+                <img src="img/corte.JPG" alt="Servicio Premium" class="servicio-img">
+                <div class="servicio-info">
+                    <h3>Perfilado de Cejas</h3>
+                    <p>Sin Agendar Hora! Perfilado y rebajada de cejas.</p>
+                    <div class="servicio-footer"><span class="duracion"><i class="fa-regular fa-clock"></i> 5 min</span><span class="precio">$3.000</span></div>
+                </div>
+            </div>
+            <div class="servicio-card">
+                <img src="img/diseño.JPG" alt="Servicio Premium" class="servicio-img">
+                <div class="servicio-info">
+                    <h3>Diseño</h3>
+                    <p>Agregar Diseño o freestyle a el Corte.</p>
+                    <div class="servicio-footer"><span class="duracion"></i>Extra</span><span class="precio">$3.000</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="galeria" class="galeria">
+        <h2 class="section-title">Galería de Fotos</h2>
+        <div class="galeria-grid">
+            <div class="galeria-item"><img src="img/1.JPG" alt="Trabajo 1"></div>
+            <div class="galeria-item"><img src="img/4.JPG" alt="Trabajo 2"></div>
+            <div class="galeria-item"><img src="img/2.JPG" alt="Trabajo 3"></div>
+            <div class="galeria-item"><img src="img/luz.jpg" alt="Trabajo 4"></div>
+            <div class="galeria-item"><img src="img/3.JPG" alt="Trabajo 5"></div>
+            <div class="galeria-item"><img src="img/movil.JPG" alt="Trabajo 6"></div>
+        </div>
+    </section>
+
+    <section id="contacto">
+        <h2 class="section-title">Encuéntranos</h2>
+        <div class="contacto-container">
+            <div class="contacto-info">
+                <h3>Reserva tu hora</h3>
+                <div class="info-item"><i class="fa-solid fa-location-dot"></i><p>Avenida Balmaceda #4133, <br>Isla de Maipo</p></div>
+                <div class="info-item"><i class="fa-brands fa-whatsapp"></i><p><a href="https://wa.me/56934177249" target="_blank">+569 3417 7249</a></p></div>
+                <div class="info-item"><i class="fa-brands fa-instagram"></i><p><a href="https://www.instagram.com/cutarstudio.cl/" target="_blank">@cutarstudio.cl</a></p></div>
+                <div class="info-item"><i class="fa-regular fa-clock"></i><p>Lun a Vie: 10:00 - 20:00 hrs<br>Sáb y Dom: 09:00 - 19:00 hrs</p></div>
+                <button class="btn btn-agendar" style="margin-top: 20px; font-size: 0.9rem;">Agendar Ahora</button>
+            </div>
+            <div class="mapa"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.7355521619343!2d-70.86485782371153!3d-33.74066711243456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x96631effa8e5f0ff%3A0xa0fce392838a502c!2sCUTAR%20STUDIO!5e1!3m2!1ses!2scl!4v1776216375719!5m2!1ses!2scl" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+        </div>
+    </section>
+
+    <section class="review-section">
+        <div class="review-stars">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+        </div>
+        <h2>¿Qué te pareció <span>tu experiencia?</span></h2>
+        <p>Tu opinión vale oro. Ayúdanos a seguir mejorando y a que más personas descubran la experiencia CUT AR STUDIO dejando una calificación.</p>
+        <a href="https://search.google.com/local/writereview?placeid=ChIJ__DlqP8eY5YRLFCKg5Lj_KA" target="_blank" class="btn btn-gold-review">
+            CALIFICAR AHORA
+        </a>
+    </section>
+
+    <footer><p><a style="color: white;">© 2024 CUT AR STUDIO</a>. Todos los derechos reservados. Diseñado por <a href="https://www.linkedin.com/company/maxivisionspa/" target="_blank" style="color: white;" >Maxivision.</a></p></footer>
+
+    <script>
+        const mobileMenuBtn = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+        const menuIcon = mobileMenuBtn.querySelector('i');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuIcon.classList.toggle('fa-bars');
+            menuIcon.classList.toggle('fa-xmark');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(item => {
+            item.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuIcon.classList.add('fa-bars');
+                menuIcon.classList.remove('fa-xmark');
+            });
+        });
+
+        const userProfileBtn = document.getElementById('user-profile');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        
+        userProfileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if(!userProfileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('active');
+            }
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcaFO3N8fePHN0u1Nb7YfkbC48nRQSl9I",
+            authDomain: "cutar-studio.firebaseapp.com",
+            projectId: "cutar-studio",
+            storageBucket: "cutar-studio.firebasestorage.app",
+            messagingSenderId: "18497479294",
+            appId: "1:18497479294:web:8a91d2810b2196bb622e2f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        const correosBarberos = [
+            "alejandro.ar.aaar17@gmail.com",
+            "lucasfernandofernandezsuarez@gmail.com",
+            "genskowski.maxi@gmail.com",
+            "kiing.sando@gmail.com" ,
+            "diegofernandofernanezsuarez7@gmail.com"
+        ];
+
+        function redirectUser(user) {
+            if (correosBarberos.includes(user.email)) {
+                window.location.href = 'barbero.html';
+            } else {
+                window.location.href = 'reservas.html';
+            }
+        }
+
+        document.getElementById('btn-login').addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(err => console.error(err));
+        });
+        
+        document.getElementById('menu-logout').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                document.getElementById('dropdown-menu').classList.remove('active');
+            }).catch(err => console.error(err));
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            const btnLogin = document.getElementById('btn-login');
+            const userProfileUI = document.getElementById('user-profile');
+            
+            if (user) {
+                btnLogin.style.display = 'none';
+                userProfileUI.style.display = 'flex';
+                document.getElementById('user-name').textContent = user.displayName.split(' ')[0];
+                document.getElementById('user-pic').src = user.photoURL;
+            } else {
+                btnLogin.style.display = 'flex';
+                userProfileUI.style.display = 'none';
+            }
+        });
+
+        document.getElementById('btn-panel').addEventListener('click', () => {
+            if(auth.currentUser) {
+                redirectUser(auth.currentUser);
+            } else {
+                signInWithPopup(auth, provider)
+                    .then((result) => { redirectUser(result.user); })
+                    .catch(err => console.error(err));
+            }
+        });
+        // Manejar la expansión de las descripciones de servicios
+        document.querySelectorAll('.servicio-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const parrafo = card.querySelector('.servicio-info p');
+                parrafo.classList.toggle('expandido');
+            });
+        });
+        document.querySelectorAll('.btn-agendar').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (auth.currentUser) {
+                    redirectUser(auth.currentUser);
+                } else {
+                    signInWithPopup(auth, provider)
+                        .then((result) => { redirectUser(result.user); })
+                        .catch(err => console.error(err));
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const videoHistoria = document.getElementById('video-historia');
+
+            // Configuramos el observador
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5 // El video se reproducirá cuando el 50% sea visible en pantalla
+            };
+
+            const videoObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Si el usuario llega a la sección, se reproduce
+                        videoHistoria.play();
+                    } else {
+                        // Si el usuario sigue bajando o sube, se pausa para ahorrar recursos
+                        videoHistoria.pause();
+                    }
+                });
+            }, observerOptions);
+
+            // Iniciamos la observación del video
+            if (videoHistoria) {
+                videoObserver.observe(videoHistoria);
+            }
+        });
+
+    </script>
+</body>
+</html>

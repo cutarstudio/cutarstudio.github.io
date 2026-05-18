@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    
+    <title>Panel de Reservas | CUT AR STUDIO</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --bg-main: #0d0d0d; --bg-sec: #161616; --bg-card: #222222; --text-light: #ffffff; --text-muted: #999999; --accent: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-light); line-height: 1.6; }
+
+        nav { background-color: black; display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; border-bottom: 1px solid #333; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-img { height: 40px; width: auto; }
+        .logo-text { font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; color: var(--text-light); line-height: 1.2; }
+        .user-nav { display: flex; align-items: center; gap: 20px; }
+        .btn-volver { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; transition: color 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-volver:hover { color: var(--accent); }
+
+        .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; text-align: center; padding: 0 20px; }
+        .login-screen h2 { font-size: 2rem; margin-bottom: 10px; text-transform: uppercase; }
+        .login-screen p { color: var(--text-muted); margin-bottom: 30px; }
+        .btn-google { background-color: var(--text-light); color: var(--bg-main); border: none; padding: 15px 30px; border-radius: 5px; font-size: 1rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .btn-google:hover { background-color: #ddd; }
+
+        .dashboard-wrapper { display: none; max-width: 1000px; margin: 40px auto; padding: 0 5%; gap: 30px; align-items: flex-start; }
+        
+        .dashboard-sidebar { width: 250px; display: flex; flex-direction: column; gap: 10px; }
+        .tab-btn { background-color: var(--bg-card); color: var(--text-muted); border: 1px solid #333; padding: 15px 20px; border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .tab-btn:hover { background-color: #333; color: var(--text-light); }
+        .tab-btn.active { background-color: var(--accent); color: var(--bg-main); font-weight: 800; border-color: var(--accent); }
+        .tab-btn-logout { color: #ff4d4d; border-color: transparent; margin-top: 10px; }
+        .tab-btn-logout:hover { background-color: #2a0808; color: #ff6666; border-color: #ff4d4d; }
+
+        .dashboard-content { flex: 1; background-color: var(--bg-card); border: 1px solid #333; border-radius: 10px; padding: 30px; min-height: 400px; width: 100%; }
+        .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #444; }
+        .panel-header h3 { font-size: 1.5rem; text-transform: uppercase; }
+        .panel-header p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- TARJETAS --- */
+        .barber-cards-container { display: flex; gap: 15px; margin-top: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .barber-card { background: var(--bg-main); border: 2px solid #444; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; min-width: 180px; flex: 1; }
+        .barber-card:hover { border-color: var(--text-muted); }
+        .barber-card.selected { border-color: var(--accent); background: #1a1a1a; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+        .barber-card img { width: 100%; aspect-ratio: 4 / 5; border-radius: 8px; object-fit: cover; margin: 0 auto 12px; display: block; }
+        .barber-card h4 { color: var(--text-light); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; }
+        
+        .wa-link { color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; transition: color 0.3s ease; }
+        .wa-link:hover { color: #25D366; }
+
+        .service-cards-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px; }
+        .service-card { background: var(--bg-main); border: 2px solid #444; border-radius: 12px; padding: 15px; text-align: left; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between;}
+        .service-card:hover { border-color: var(--text-muted); }
+        .service-card.selected { border-color: var(--accent); background: #1a1a1a; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+        .service-card h4 { color: var(--text-light); font-size: 1.1rem; margin-bottom: 5px; text-transform: uppercase; }
+        .service-card .price { color: var(--accent); font-weight: bold; font-size: 1rem; margin-bottom: 8px; }
+        .service-card .desc { color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; margin-bottom: 10px; flex-grow: 1; }
+        .service-card .duration { font-size: 0.8rem; background: #333; padding: 4px 8px; border-radius: 4px; color: #ddd; align-self: flex-start; }
+
+        /* Extras Diseño */
+        .extra-box { margin-top: 15px; background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px dashed #444; transition: 0.3s; }
+        .extra-box:hover { border-color: var(--text-muted); }
+        .extra-label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+        .extra-label input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--accent); cursor: pointer; margin-top: 2px; }
+        .extra-text { display: flex; flex-direction: column; }
+        .extra-title { font-weight: 800; color: var(--text-light); font-size: 1rem; }
+        .extra-price { color: var(--accent); font-weight: bold; font-size: 0.9rem; }
+        .extra-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 3px; }
+
+        /* Formularios */
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+        .form-group input { width: 100%; padding: 12px; background-color: var(--bg-main); border: 1px solid #444; color: white; border-radius: 5px; font-size: 1rem; }
+        .form-group input:focus { outline: none; border-color: var(--accent); }
+        
+        .input-readonly { background-color: #111 !important; color: #777 !important; border-color: #222 !important; cursor: not-allowed; }
+        .readonly-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; display: block; }
+        
+        .btn-submit { width: 100%; padding: 15px; background-color: var(--accent); color: var(--bg-main); font-weight: 800; text-transform: uppercase; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background-color: transparent; color: var(--accent); border: 1px solid var(--accent); }
+        
+        .msg-box { display: none; text-align: center; margin-top: 15px; font-weight: bold; font-size: 0.9rem; padding: 10px; border-radius: 5px; }
+        .msg-success { color: #4CAF50; background: rgba(76, 175, 80, 0.1); border: 1px solid #4CAF50; }
+        .msg-error { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; }
+
+        /* CALENDARIO DE 7 DÍAS */
+        .calendar-wrapper { background: var(--bg-main); border: 1px solid #444; border-radius: 8px; padding: 15px; margin-top: 10px; }
+        .calendar-header { display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
+        .calendar-header h4 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+        
+        .weekly-calendar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .weekly-calendar::-webkit-scrollbar { height: 6px; }
+        .weekly-calendar::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        
+        .day-card { flex: 1; min-width: 70px; background: var(--bg-card); border: 1px solid #444; border-radius: 8px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.3s; user-select: none; }
+        .day-card:hover:not(.disabled) { background: #333; border-color: var(--text-muted); }
+        .day-card.disabled { opacity: 0.3; cursor: not-allowed; background: #111; }
+        .day-card.selected { background: var(--accent); color: var(--bg-main); border-color: var(--accent); }
+        
+        .day-card .day-name { font-size: 0.75rem; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; color: var(--text-muted); }
+        .day-card.selected .day-name { color: var(--bg-main); }
+        .day-card .day-number { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+        .day-card .day-month { font-size: 0.7rem; font-weight: 600; display: block; margin-top: 4px;}
+        
+        .time-slots-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; }
+        .time-slot { background: var(--bg-card); border: 1px solid #444; padding: 10px 15px; border-radius: 5px; cursor: pointer; transition: 0.2s; font-size: 0.9rem; font-weight: 600; flex: 1 1 calc(25% - 10px); text-align: center; min-width: 80px; }
+        .time-slot:hover { border-color: var(--text-light); background: #333; }
+        .time-slot.selected { background: var(--text-light); color: var(--bg-main); border-color: var(--text-light); }
+        .select-prompt { color: var(--text-muted); font-size: 0.9rem; font-style: italic; width: 100%; text-align: center; }
+
+        .time-slot.disabled-slot { background: #1a1a1a; border-color: #333; color: #555; cursor: not-allowed; opacity: 0.8; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .time-slot.disabled-slot:hover { background: #1a1a1a; border-color: #333; }
+        .time-slot.disabled-slot span { font-size: 0.6rem; margin-top: 4px; line-height: 1.1; color: #ff4d4d; font-weight: normal; }
+
+        /* Lista de Horas */
+        .appointments-list { display: flex; flex-direction: column; gap: 15px; }
+        .appointment-card { background: var(--bg-main); border: 1px solid #444; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;}
+        .appointment-info h4 { color: var(--text-light); margin-bottom: 3px; font-size: 1.1rem; text-transform: uppercase; }
+        .appointment-info p { font-size: 0.9rem; color: #ccc; margin-bottom: 3px; }
+        .appointment-info .reserva-precio { font-size: 1.1rem; font-weight: 800; color: var(--accent); margin-bottom: 8px; margin-top: 3px; }
+        .appointment-info span { color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 8px; }
+        .extra-badge-client { background: #333; color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; font-weight: 600; }
+        
+        .appointment-date { text-align: right; display: flex; flex-direction: column; align-items: flex-end;}
+        .appointment-date .day { font-size: 1.5rem; font-weight: 900; }
+        .appointment-date .time { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;}
+        .btn-cancelar { background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
+        .btn-cancelar:hover { background: #ff4d4d; color: white; }
+
+        .no-appointments { text-align: center; color: var(--text-muted); font-style: italic; padding: 30px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-wrapper { flex-direction: column; padding: 0 15px; }
+            .dashboard-sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
+            .tab-btn { flex: 1; justify-content: center; min-width: 150px; white-space: nowrap; font-size: 0.9rem; padding: 10px; }
+            .user-nav span { display: none; }
+            .dashboard-content { padding: 20px; }
+            .appointment-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .appointment-date { text-align: left; align-items: flex-start; width: 100%; border-top: 1px solid #333; padding-top: 10px; flex-direction: row; justify-content: space-between;}
+            .appointment-date .time { margin-bottom: 0; }
+            .time-slot { flex: 1 1 calc(33.333% - 10px); }
+            .barber-cards-container { flex-direction: row; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="CUT AR" class="logo-img">
+            <div class="logo-text">CUT AR</div>
+        </a>
+        <div class="user-nav">
+            <a href="index.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> <span>Volver</span></a>
+        </div>
+    </nav>
+
+    <div class="login-screen" id="login-screen">
+        <h2>Área de Clientes</h2>
+        <p>Inicia sesión para gestionar tus reservas en el estudio.</p>
+        <button class="btn-google" id="btn-login"><i class="fa-brands fa-google"></i> Iniciar con Google</button>
+    </div>
+
+    <div class="dashboard-wrapper" id="dashboard-wrapper">
+        
+        <aside class="dashboard-sidebar">
+            <button class="tab-btn active" data-target="tab-agendar"><i class="fa-regular fa-calendar-plus"></i> Agendar Hora</button>
+            <button class="tab-btn" data-target="tab-mis-horas"><i class="fa-solid fa-list"></i> Mis Horas</button>
+            <button class="tab-btn" data-target="tab-perfil"><i class="fa-solid fa-user-pen"></i> Editar Perfil</button>
+            <button class="tab-btn tab-btn-logout" id="btn-logout-sidebar"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+        </aside>
+
+        <main class="dashboard-content">
+            
+            <div id="tab-agendar" class="tab-panel active">
+                <div class="panel-header">
+                    <h3>Agendar Hora</h3>
+                    <p>Sigue los pasos para confirmar tu atención.</p>
+                </div>
+                
+                <form id="booking-form">
+                    
+                    <div class="form-group">
+                        <label for="nombre">Tus Datos</label>
+                        <input type="text" id="nombre" class="input-readonly" readonly style="margin-bottom: 5px;">
+                        <input type="tel" id="telefono" class="input-readonly" readonly>
+                        <span class="readonly-hint"><i class="fa-solid fa-circle-info"></i> Si necesitas actualizar tus datos, ve a la pestaña "Editar Perfil".</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>1. Selecciona tu Barbero</label>
+                        <div class="barber-cards-container">
+                            <div class="barber-card" data-id="Alejandro" data-email="alejandro.ar.aaar17@gmail.com">
+                                <img src="img/alejandro.JPG" alt="Alejandro">
+                                <h4>Alejandro</h4>
+                                <a href="https://wa.me/56934177249" class="wa-link" target="_blank" onclick="event.stopPropagation()">
+                                    <i class="fa-brands fa-whatsapp"></i> +569 3417 7249
+                                </a>
+                            </div>
+                            <div class="barber-card" data-id="Lucas" data-email="lucasfernandofernandezsuarez@gmail.com">
+                                <img src="img/lucas.JPG" alt="Lucas">
+                                <h4>Lucas</h4>
+                                <a href="https://wa.me/59176176633" class="wa-link" target="_blank" onclick="event.stopPropagation()">
+                                    <i class="fa-brands fa-whatsapp"></i> +591 7617 6633
+                                </a>
+                            </div>
+                            <div class="barber-card" data-id="Sando" data-email="kiing.sando@gmail.com">
+                                <img src="img/sando.JPG" alt="Sando">
+                                <h4>Sando</h4>
+                                <a href="https://wa.me/56971545165" class="wa-link" target="_blank" onclick="event.stopPropagation()">
+                                    <i class="fa-brands fa-whatsapp"></i> +569 7154 5165
+                                </a>
+                            </div>
+                            <div class="barber-card" data-id="Diego" data-email="diegofernandofernanezsuarez7@gmail.com">
+                                <img src="img/diego.JPG" alt="Diego">
+                                <h4>Diego</h4>
+                                <a href="https://wa.me/56946240279" class="wa-link" target="_blank" onclick="event.stopPropagation()">
+                                    <i class="fa-brands fa-whatsapp"></i> +569 4624 0279
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="barbero-seleccionado" required>
+                        <input type="hidden" id="barbero-email" required>
+                    </div>
+
+                    <div id="step-2-container" style="display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+                        <div class="form-group">
+                            <label>2. Selecciona un Servicio</label>
+                            <div class="service-cards-container">
+                                <div class="service-card" data-value="Corte" data-blocks="1">
+                                    <h4>Corte</h4>
+                                    <div class="price">$12.000</div>
+                                    <p class="desc">Corte tradicional, degradado, fade, etc. adaptado a tu estilo personal. Incluye lineas y perfilado de cejas, si lo desea.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
+                                </div>
+                                <div class="service-card" data-value="Barba" data-blocks="1">
+                                    <h4>Perfilado de Barba</h4>
+                                    <div class="price">$10.000</div>
+                                    <p class="desc">Perfilado y corte de barba, alineación precisa con navaja y aceites.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 15 min</div>
+                                </div>
+                                <div class="service-card" data-value="Corte + Barba" data-blocks="2">
+                                    <h4>Corte + Barba</h4>
+                                    <div class="price">$20.000</div>
+                                    <p class="desc">La experiencia clásica completa para el cuidado de tu cabello y barba.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 45 min</div>
+                                </div>
+                                <div class="service-card" data-value="Corte + Asesoria" data-blocks="1">
+                                    <h4>Corte + Asesoria</h4>
+                                    <div class="price">$15.000</div>
+                                    <p class="desc">La experiencia de un Corte sumado a una Asesoria profesional.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 40 min</div>
+                                </div>
+                                <div class="service-card" data-value="Full" data-blocks="2">
+                                    <h4>Full Premium Experience</h4>
+                                    <div class="price">$25.000</div>
+                                    <p class="desc">Experiencia Completa, Asesoria profesional + Corte + Perfilado y Corte de Barba + Lavado y peinado final.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 1 hr</div>
+                                </div>
+                            </div>
+                            
+                            <div class="extra-box">
+                                <label class="extra-label">
+                                    <input type="checkbox" id="extra-diseno">
+                                    <div class="extra-text">
+                                        <span class="extra-title">Agregar Diseño <span class="extra-price">(+ $3.000)</span></span>
+                                        <span class="extra-desc">Diseño o freestyle.</span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <input type="hidden" id="servicio" required>
+                            <input type="hidden" id="servicio-bloques" required>
+                        </div>
+                    </div>
+
+                    <div id="step-3-container" style="display: none; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+                        <div class="form-group">
+                            <label>3. Elige Día y Hora</label>
+                            <div class="calendar-wrapper" id="calendar-wrapper">
+                                <div class="calendar-header">
+                                    <h4>Disponibilidad: Próximos 7 días</h4>
+                                </div>
+                                <div class="weekly-calendar" id="weekly-calendar"></div>
+                                <div class="time-slots-container" id="time-slots-container">
+                                    <p class="select-prompt">Selecciona un día en el calendario para ver las horas libres.</p>
+                                </div>
+                                <input type="hidden" id="fecha-seleccionada">
+                                <input type="hidden" id="hora-seleccionada">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="submit-btn" style="display: none; margin-top: 25px;">Confirmar Reserva</button>
+                    </div>
+                    
+                    <div class="msg-box msg-success" id="success-msg">¡Reserva enviada con éxito!</div>
+                    <div class="msg-box msg-error" id="error-msg"></div>
+                </form>
+            </div>
+
+            <div id="tab-mis-horas" class="tab-panel">
+                <div class="panel-header">
+                    <h3>Mis Reservas</h3>
+                    <p>Historial de tus reservas agendadas. Puedes liberar tu hora si no podrás asistir.</p>
+                </div>
+                <div class="appointments-list" id="appointments-container">
+                    <p class="no-appointments">Cargando...</p>
+                </div>
+            </div>
+
+            <div id="tab-perfil" class="tab-panel">
+                <div class="panel-header">
+                    <h3>Editar Perfil</h3>
+                    <p>Actualiza tus datos oficiales de contacto.</p>
+                </div>
+                <div class="form-group">
+                    <label for="profile-name">Nombre Completo</label>
+                    <input type="text" id="profile-name" placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                    <label for="profile-phone">Teléfono (WhatsApp)</label>
+                    <input type="tel" id="profile-phone" placeholder="Ej: +56912345678">
+                </div>
+                <button class="btn-submit" id="save-profile-btn" style="background-color: transparent; border: 2px solid var(--text-light); color: var(--text-light);">Guardar Datos</button>
+                <div class="msg-box msg-success" id="profile-success-msg">¡Perfil actualizado correctamente!</div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabBtns.forEach(btn => {
+            if(btn.id === 'btn-logout-sidebar') return;
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanels.forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.target).classList.add('active');
+            });
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, doc, setDoc, getDoc, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcaFO3N8fePHN0u1Nb7YfkbC48nRQSl9I",
+            authDomain: "cutar-studio.firebaseapp.com",
+            projectId: "cutar-studio",
+            storageBucket: "cutar-studio.firebasestorage.app",
+            messagingSenderId: "18497479294",
+            appId: "1:18497479294:web:8a91d2810b2196bb622e2f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+        
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwS3awQ_XqSABJ8mgr8W9E45jzKxU5I3IlHUVktxPTb5DlB3p4S_KXQK450Ennt41c53g/exec";
+
+        let currentUserProfile = null;
+
+        document.getElementById('btn-login').addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(err => console.error(err));
+        });
+        
+        document.getElementById('btn-logout-sidebar').addEventListener('click', () => {
+            signOut(auth).then(() => { window.location.href = 'index.html'; });
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard-wrapper').style.display = 'flex';
+
+                const userRef = doc(db, "usuarios", user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (userSnap.exists()) {
+                    currentUserProfile = userSnap.data();
+                    if(!currentUserProfile.telefono) {
+                        document.querySelector('[data-target="tab-perfil"]').click();
+                    }
+                } else {
+                    currentUserProfile = { nombre: user.displayName, email: user.email, telefono: "" };
+                    await setDoc(userRef, currentUserProfile);
+                    document.querySelector('[data-target="tab-perfil"]').click();
+                }
+
+                rellenarFormularios(user);
+                cargarMisHoras(user.uid);
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('dashboard-wrapper').style.display = 'none';
+            }
+        });
+
+        function rellenarFormularios(user) {
+            document.getElementById('nombre').value = currentUserProfile.nombre || user.displayName;
+            document.getElementById('telefono').value = currentUserProfile.telefono || "";
+            document.getElementById('profile-name').value = currentUserProfile.nombre || user.displayName;
+            document.getElementById('profile-phone').value = currentUserProfile.telefono || "";
+        }
+
+        document.getElementById('save-profile-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('save-profile-btn');
+            btn.textContent = 'Guardando...'; btn.disabled = true;
+
+            const nuevoNombre = document.getElementById('profile-name').value.trim();
+            const nuevoTelefono = document.getElementById('profile-phone').value.trim();
+
+            if(!nuevoTelefono || !nuevoNombre) {
+                alert("Completa ambos campos para continuar.");
+                btn.textContent = 'Guardar Datos'; btn.disabled = false;
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, "usuarios", auth.currentUser.uid), { nombre: nuevoNombre, telefono: nuevoTelefono }, { merge: true });
+                currentUserProfile.nombre = nuevoNombre;
+                currentUserProfile.telefono = nuevoTelefono;
+                rellenarFormularios(auth.currentUser);
+
+                const msg = document.getElementById('profile-success-msg');
+                msg.style.display = 'block';
+                setTimeout(() => { msg.style.display = 'none'; btn.textContent = 'Guardar Datos'; btn.disabled = false; }, 2000);
+            } catch (error) {
+                console.error(error);
+                btn.textContent = 'Guardar Datos'; btn.disabled = false;
+            }
+        });
+
+        /* ==============================
+           2. LÓGICA DE CALENDARIO Y FLUJO
+        ============================== */
+        // Lunes a Viernes (desde las 10:00)
+        const horasSemana = [
+            "10:00", "10:30", "11:00", "11:30", "12:00", "12:30",
+            "13:00", "13:30", "15:00", "15:30",
+            "16:00", "16:30", "17:00", "17:30", "18:00", "18:30",
+            "19:00", "19:30"
+        ];
+
+        // Sábados y Domingos (desde las 09:00)
+        const horasFinde = [
+            "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+            "12:00", "12:30", "13:00", "13:30",
+            "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", 
+            "18:00", "18:30", "19:00", "19:30"
+        ];
+        
+        let bookedSlots = {}; 
+        let bloqueosBarbero = []; 
+        let selectedDateString = "";
+
+        const barberCards = document.querySelectorAll('.barber-card');
+        const serviceCards = document.querySelectorAll('.service-card');
+        const step2Container = document.getElementById('step-2-container');
+        const step3Container = document.getElementById('step-3-container');
+        
+        const barberoInput = document.getElementById('barbero-seleccionado');
+        const barberoEmailInput = document.getElementById('barbero-email');
+        const servicioInput = document.getElementById('servicio');
+        const servicioBloquesInput = document.getElementById('servicio-bloques');
+        const extraDisenoCheckbox = document.getElementById('extra-diseno');
+        
+        const submitBtnGlobal = document.getElementById('submit-btn');
+
+        function getNextSlot(timeStr) {
+            let [h, m] = timeStr.split(':').map(Number);
+            m += 30;
+            if (m >= 60) { h += 1; m -= 60; }
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+        }
+
+        function isHoraOcupadaOBloqueada(fecha, diaNum, hora, ocupadasArray) {
+            if (ocupadasArray && ocupadasArray.includes(hora)) return true;
+            
+            let bloqueada = false;
+            bloqueosBarbero.forEach(b => {
+                if (b.hora === hora || b.hora === "Todo el día") {
+                    if (b.tipo === "especifico" && b.fecha === fecha) bloqueada = true;
+                    if (b.tipo === "recurrente_dia" && parseInt(b.diaSemana) === diaNum) bloqueada = true;
+                }
+            });
+            return bloqueada;
+        }
+
+        barberCards.forEach(card => {
+            card.addEventListener('click', async () => {
+                barberCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                
+                const barberoNombre = card.getAttribute('data-id');
+                const barberoEmail = card.getAttribute('data-email');
+                barberoInput.value = barberoNombre;
+                barberoEmailInput.value = barberoEmail;
+                
+                serviceCards.forEach(c => c.classList.remove('selected'));
+                servicioInput.value = "";
+                servicioBloquesInput.value = "";
+                extraDisenoCheckbox.checked = false; 
+                step3Container.style.display = 'none';
+                submitBtnGlobal.style.display = 'none';
+                
+                step2Container.style.display = 'block';
+
+                setTimeout(() => {
+                    step2Container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+                
+                document.getElementById('time-slots-container').innerHTML = '<p class="select-prompt">Cargando disponibilidad de ' + barberoNombre + '...</p>';
+                await fetchBookingsForBarber(barberoNombre);
+                await fetchBloqueosForBarber(barberoEmail);
+                
+                renderWeeklyCalendar();
+                document.getElementById('time-slots-container').innerHTML = '<p class="select-prompt">Selecciona un día en el calendario para ver las horas libres.</p>';
+                document.getElementById('fecha-seleccionada').value = "";
+                document.getElementById('hora-seleccionada').value = "";
+                selectedDateString = "";
+            });
+        });
+
+        serviceCards.forEach(card => {
+            card.addEventListener('click', () => {
+                serviceCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                
+                servicioInput.value = card.getAttribute('data-value');
+                servicioBloquesInput.value = card.getAttribute('data-blocks');
+                
+                step3Container.style.display = 'block';
+
+                setTimeout(() => {
+                    step3Container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+                
+                if(selectedDateString) {
+                    const [y, m, d] = selectedDateString.split('-');
+                    const fechaObj = new Date(y, m-1, d);
+                    renderTimeSlots(selectedDateString, fechaObj.getDay());
+                    document.getElementById('hora-seleccionada').value = "";
+                    submitBtnGlobal.style.display = 'none';
+                }
+            });
+        });
+
+        async function fetchBookingsForBarber(barbero) {
+            bookedSlots = {};
+            try {
+                const q = query(collection(db, "reservas"), where("barbero", "==", barbero));
+                const snapshot = await getDocs(q);
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if(!bookedSlots[data.fecha]) bookedSlots[data.fecha] = [];
+                    bookedSlots[data.fecha].push(data.hora);
+                    
+                    if(data.bloques === 2) {
+                        bookedSlots[data.fecha].push(getNextSlot(data.hora));
+                    }
+                });
+            } catch(e) { console.error("Error trayendo reservas", e); }
+        }
+
+        async function fetchBloqueosForBarber(email) {
+            bloqueosBarbero = [];
+            try {
+                const q = query(collection(db, "bloqueos"), where("barberoEmail", "==", email));
+                const snap = await getDocs(q);
+                snap.forEach(doc => bloqueosBarbero.push(doc.data()));
+            } catch(e) { console.error("Error trayendo bloqueos", e); }
+        }
+
+        function renderWeeklyCalendar() {
+            const grid = document.getElementById('weekly-calendar');
+            grid.innerHTML = '';
+
+            const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+            const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+            
+            const hoyObj = new Date();
+            
+            for(let i=0; i<7; i++) {
+                const iterDate = new Date();
+                iterDate.setDate(hoyObj.getDate() + i);
+                
+                const y = iterDate.getFullYear();
+                const m = iterDate.getMonth();
+                const d = iterDate.getDate();
+                const fechaStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const diaSemanaNum = iterDate.getDay();
+
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card';
+                
+                let nombreDia = diasSemana[diaSemanaNum];
+                if(i === 0) nombreDia = "Hoy";
+                if(i === 1) nombreDia = "Mañana";
+
+                dayCard.innerHTML = `
+                    <div class="day-name">${nombreDia}</div>
+                    <div class="day-number">${d}</div>
+                    <div class="day-month">${meses[m]}</div>
+                `;
+
+                let isDisabled = false;
+
+                const ocupadasHoy = bookedSlots[fechaStr] || [];
+                // Si es domingo (0) o sábado (6), usa el horario de fin de semana
+                const horasDelDia = (diaSemanaNum === 0 || diaSemanaNum === 6) ? horasFinde : horasSemana;
+                let horasNoDisponibles = 0;
+                    
+                horasDelDia.forEach(h => {
+                     if(isHoraOcupadaOBloqueada(fechaStr, diaSemanaNum, h, ocupadasHoy)) {
+                         horasNoDisponibles++;
+                     }
+                });
+
+                if (horasNoDisponibles >= horasDelDia.length) {
+                    isDisabled = true;
+                }
+
+                if(isDisabled) {
+                    dayCard.classList.add('disabled');
+                } else {
+                    dayCard.addEventListener('click', () => {
+                        document.querySelectorAll('.day-card').forEach(el => el.classList.remove('selected'));
+                        dayCard.classList.add('selected');
+                        
+                        selectedDateString = fechaStr;
+                        document.getElementById('fecha-seleccionada').value = fechaStr;
+                        document.getElementById('hora-seleccionada').value = ""; 
+                        submitBtnGlobal.style.display = 'none'; 
+                        
+                        renderTimeSlots(fechaStr, diaSemanaNum);
+                    });
+                }
+
+                if(fechaStr === selectedDateString && !isDisabled) dayCard.classList.add('selected');
+                grid.appendChild(dayCard);
+            }
+        }
+
+        function renderTimeSlots(fechaStr, diaSemanaNum) {
+            const container = document.getElementById('time-slots-container');
+            container.innerHTML = '';
+
+            // Si es domingo o sábado, usar horario de finde
+            const horasArray = (diaSemanaNum === 0 || diaSemanaNum === 6) ? horasFinde : horasSemana;
+            const ocupadasHoy = bookedSlots[fechaStr] || [];
+            
+            const bloquesNecesarios = parseInt(document.getElementById('servicio-bloques').value || 1);
+
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            const isToday = (fechaStr === todayStr);
+            const currentHour = now.getHours();
+            const currentMinutes = now.getMinutes();
+
+            let slotsDrawn = 0;
+
+            horasArray.forEach(hora => {
+                let [h, m] = hora.split(':').map(Number);
+                
+                if (isToday) {
+                    if (h < currentHour || (h === currentHour && m <= currentMinutes)) {
+                        return; 
+                    }
+                }
+
+                const isDirectlyBooked = isHoraOcupadaOBloqueada(fechaStr, diaSemanaNum, hora, ocupadasHoy);
+                if(isDirectlyBooked) return;
+
+                let hasEnoughTime = true;
+
+                if(bloquesNecesarios === 2) {
+                    const nextHora = getNextSlot(hora);
+                    if (!horasArray.includes(nextHora) || isHoraOcupadaOBloqueada(fechaStr, diaSemanaNum, nextHora, ocupadasHoy)) {
+                        hasEnoughTime = false;
+                    }
+                }
+
+                const slotBtn = document.createElement('div');
+                slotBtn.className = 'time-slot';
+                
+                if(hasEnoughTime) {
+                    slotBtn.textContent = hora;
+                    slotBtn.addEventListener('click', () => {
+                        document.querySelectorAll('.time-slot').forEach(el => el.classList.remove('selected'));
+                        slotBtn.classList.add('selected');
+                        document.getElementById('hora-seleccionada').value = hora;
+                        submitBtnGlobal.style.display = 'block';
+                        
+                        setTimeout(() => {
+                            submitBtnGlobal.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                        }, 100);
+                    });
+                } 
+                else {
+                    slotBtn.classList.add('disabled-slot');
+                    slotBtn.innerHTML = `${hora} <span>Tiempo Insuficiente</span>`;
+                }
+
+                container.appendChild(slotBtn);
+                slotsDrawn++;
+            });
+            
+            if(slotsDrawn === 0) {
+                container.innerHTML = '<p class="select-prompt" style="color:#ff4d4d;">Ya no quedan horas disponibles para este día.</p>';
+            }
+        }
+
+        /* ==============================
+           3. ENVÍO DEL FORMULARIO CON DOBLE VERIFICACIÓN
+        ============================== */
+        document.getElementById('booking-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const errorMsg = document.getElementById('error-msg');
+            const successMsg = document.getElementById('success-msg');
+            
+            const fechaVal = document.getElementById('fecha-seleccionada').value;
+            const horaVal = document.getElementById('hora-seleccionada').value;
+            const barberoVal = document.getElementById('barbero-seleccionado').value;
+            const barberoEmailVal = document.getElementById('barbero-email').value;
+            let servicioVal = document.getElementById('servicio').value;
+            const bloquesVal = parseInt(document.getElementById('servicio-bloques').value || 1);
+            
+            if (extraDisenoCheckbox.checked) {
+                servicioVal += " (+ Diseño $3.000)";
+            }
+            
+            if(!fechaVal || !horaVal || !barberoVal || !servicioVal) {
+                errorMsg.textContent = "Por favor completa todos los pasos.";
+                errorMsg.style.display = 'block'; return;
+            }
+
+            submitBtn.textContent = 'Guardando...'; submitBtn.disabled = true;
+            errorMsg.style.display = 'none'; successMsg.style.display = 'none';
+
+            try {
+                const qCheck = query(collection(db, "reservas"), 
+                    where("barbero", "==", barberoVal), 
+                    where("fecha", "==", fechaVal));
+                const checkSnap = await getDocs(qCheck);
+                
+                let ocupadasTemp = [];
+                checkSnap.forEach(d => {
+                    ocupadasTemp.push(d.data().hora);
+                    if(d.data().bloques === 2) ocupadasTemp.push(getNextSlot(d.data().hora));
+                });
+                
+                const qBloq = query(collection(db, "bloqueos"), where("barberoEmail", "==", barberoEmailVal));
+                const snapBloq = await getDocs(qBloq);
+                bloqueosBarbero = []; 
+                snapBloq.forEach(doc => bloqueosBarbero.push(doc.data()));
+
+                const [y, m, d] = fechaVal.split('-');
+                const diaValNum = new Date(y, m-1, d).getDay();
+                
+                let choque = isHoraOcupadaOBloqueada(fechaVal, diaValNum, horaVal, ocupadasTemp);
+                if (bloquesVal === 2 && isHoraOcupadaOBloqueada(fechaVal, diaValNum, getNextSlot(horaVal), ocupadasTemp)) {
+                    choque = true;
+                }
+
+                if (choque) {
+                    errorMsg.textContent = "Lo sentimos, alguien acaba de reservar o bloquear este horario. Por favor, elige otro.";
+                    errorMsg.style.display = 'block'; 
+                    submitBtn.textContent = 'Confirmar Reserva'; submitBtn.disabled = false; 
+                    
+                    await fetchBookingsForBarber(barberoVal);
+                    renderWeeklyCalendar();
+                    renderTimeSlots(fechaVal, diaValNum);
+                    submitBtnGlobal.style.display = 'none';
+                    return; 
+                }
+
+                // Se guarda en Firebase y capturamos el ID en "docRef"
+                const docRef = await addDoc(collection(db, "reservas"), {
+                    nombre: document.getElementById('nombre').value, 
+                    telefono: document.getElementById('telefono').value, 
+                    emailCliente: auth.currentUser.email,
+                    barbero: barberoVal, 
+                    barberoEmail: barberoEmailVal,
+                    servicio: servicioVal, 
+                    bloques: bloquesVal,
+                    fecha: fechaVal, 
+                    hora: horaVal, 
+                    userId: auth.currentUser.uid, 
+                    timestamp: new Date()
+                });
+
+                // =========================================================
+                // NUEVO CÓDIGO: Enviar datos a Google Apps Script
+                // =========================================================
+                const payloadAppsScript = {
+                    action: "agendar",
+                    idReserva: docRef.id,
+                    nombre: document.getElementById('nombre').value,
+                    telefono: document.getElementById('telefono').value,
+                    emailCliente: auth.currentUser.email,
+                    barbero: barberoVal,
+                    barberoEmail: barberoEmailVal,
+                    servicio: servicioVal,
+                    fecha: fechaVal,
+                    hora: horaVal
+                };
+
+                fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors", 
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payloadAppsScript)
+                }).catch(err => console.error("Error notificando a Apps Script:", err));
+                // =========================================================
+
+                successMsg.style.display = 'block';
+                document.getElementById('booking-form').reset();
+                extraDisenoCheckbox.checked = false;
+                
+                document.querySelectorAll('.barber-card').forEach(c => c.classList.remove('selected'));
+                document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+                document.getElementById('step-2-container').style.display = 'none';
+                document.getElementById('step-3-container').style.display = 'none';
+                
+                rellenarFormularios(auth.currentUser);
+                cargarMisHoras(auth.currentUser.uid);
+
+                setTimeout(() => { 
+                    successMsg.style.display = 'none'; 
+                    submitBtn.textContent = 'Confirmar Reserva'; submitBtn.disabled = false; 
+                    document.querySelector('[data-target="tab-mis-horas"]').click();
+                }, 2000);
+
+            } catch (error) {
+                console.error(error); 
+                errorMsg.textContent = "Hubo un error de conexión. Inténtalo de nuevo.";
+                errorMsg.style.display = 'block';
+                submitBtn.textContent = 'Confirmar Reserva'; submitBtn.disabled = false;
+            }
+        });
+
+        /* ==============================
+           4. RENDERIZAR "MIS HORAS" CON PRECIO TOTAL
+        ============================== */
+        // Función auxiliar para calcular el precio
+        function calcularPrecio(servicioStr) {
+            let total = 0;
+            if (servicioStr.includes("Corte")) total += 12000;
+            else if (servicioStr.includes("Corte + Barba")) total += 20000;
+            else if (servicioStr.includes("Corte + Asesoria")) total += 15000;
+            else if (servicioStr.includes("Barba")) total += 10000;
+            else if (servicioStr.includes("Full")) total += 25000;
+
+            if (servicioStr.includes("(+ Diseño $3.000)")) {
+                total += 3000;
+            }
+            return "$" + total.toLocaleString('es-CL');
+        }
+
+        async function cargarMisHoras(uid) {
+            const container = document.getElementById('appointments-container');
+            container.innerHTML = '<p class="no-appointments">Cargando...</p>';
+            
+            try {
+                const q = query(collection(db, "reservas"), where("userId", "==", uid));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p class="no-appointments">No tienes horas agendadas aún.</p>';
+                    return;
+                }
+
+                container.innerHTML = ''; 
+                let reservas = [];
+                querySnapshot.forEach((doc) => {
+                    let data = doc.data();
+                    data.id = doc.id; 
+                    reservas.push(data);
+                });
+                
+                reservas.sort((a, b) => new Date(a.fecha + "T" + a.hora) - new Date(b.fecha + "T" + b.hora));
+
+                reservas.forEach(res => {
+                    const fechaLatina = res.fecha.split('-').reverse().join('/');
+                    
+                    // Calcular el precio y el badge de diseño
+                    const precioTotal = calcularPrecio(res.servicio);
+                    const nombreBase = res.servicio.replace(" (+ Diseño $3.000)", "");
+                    const tieneExtra = res.servicio.includes("(+ Diseño $3.000)");
+                    const extraBadge = tieneExtra ? `<span class="extra-badge-client"><i class="fa-solid fa-paintbrush"></i> Diseño</span>` : '';
+
+                    const card = document.createElement('div');
+                    card.className = 'appointment-card';
+                    
+                    card.innerHTML = `
+                        <div class="appointment-info">
+                            <h4>${nombreBase}</h4>
+                            ${extraBadge}
+                            <div class="reserva-precio">${precioTotal}</div>
+                            <p><i class="fa-solid fa-scissors"></i> Barbero: <strong>${res.barbero}</strong></p>
+                        </div>
+                        <div class="appointment-date">
+                            <div style="display:flex; gap:10px; align-items:center; margin-bottom: 5px;">
+                                <div class="day">${fechaLatina}</div>
+                                <div class="time" style="margin-bottom:0;"><i class="fa-regular fa-clock"></i> ${res.hora} hrs</div>
+                            </div>
+                            <button class="btn-cancelar" data-id="${res.id}">Cancelar Reserva</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                document.querySelectorAll('.btn-cancelar').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const docId = e.target.getAttribute('data-id');
+                        
+                        // Extraemos la reserva específica antes de borrarla
+                        const r = reservas.find(res => res.id === docId);
+
+                        if(confirm('¿Estás seguro que deseas cancelar tu reserva? Esto liberará la hora para otro cliente.')) {
+                            e.target.textContent = "Cancelando...";
+                            try {
+                                // 1. Avisarle al Backend que cambie a "CANCELADO" y envíe email al barbero
+                                if(r) {
+                                    fetch(APPS_SCRIPT_URL, {
+                                        method: "POST", mode: "no-cors",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ 
+                                            action: "cancelar_cliente", 
+                                            idReserva: docId,
+                                            barberoEmail: r.barberoEmail,
+                                            barbero: r.barbero,
+                                            nombre: r.nombre,
+                                            fecha: r.fecha,
+                                            hora: r.hora,
+                                            servicio: r.servicio
+                                        })
+                                    }).catch(err => console.error(err));
+                                }
+
+                                // 2. Borrar de Firebase
+                                await deleteDoc(doc(db, "reservas", docId));
+                                cargarMisHoras(uid); 
+                            } catch(err) {
+                                console.error(err);
+                                alert('Hubo un error al intentar cancelar la reserva.');
+                            }
+                        }
+                    });
+                });
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p class="no-appointments" style="color:red;">Error al cargar las horas.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Barbero | CUT AR STUDIO</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --bg-main: #0d0d0d; --bg-sec: #161616; --bg-card: #222222; --text-light: #ffffff; --text-muted: #999999; --accent: #d4af37; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-light); line-height: 1.6; }
+
+        nav { background-color: black; display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; border-bottom: 1px solid #333; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-img { height: 40px; width: auto; }
+        .logo-text { font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; color: var(--text-light); line-height: 1.2; }
+        .logo-text span { color: var(--accent); } 
+        .btn-volver { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; transition: color 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-volver:hover { color: var(--text-light); }
+
+        .login-screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 80vh; text-align: center; padding: 0 20px; }
+        .login-screen h2 { font-size: 2rem; margin-bottom: 10px; text-transform: uppercase; color: var(--accent); }
+        .login-screen p { color: var(--text-muted); margin-bottom: 30px; }
+
+        .dashboard-wrapper { display: none; max-width: 1400px; margin: 40px auto; padding: 0 2%; gap: 30px; align-items: flex-start; }
+        
+        .dashboard-sidebar { width: 250px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+        .tab-btn { background-color: var(--bg-card); color: var(--text-muted); border: 1px solid #333; padding: 15px 20px; border-radius: 8px; cursor: pointer; text-align: left; font-size: 1rem; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .tab-btn:hover { background-color: #333; color: var(--text-light); }
+        .tab-btn.active { background-color: var(--accent); color: var(--bg-main); font-weight: 800; border-color: var(--accent); }
+        .tab-btn-logout { color: #ff4d4d; border-color: transparent; margin-top: 10px; }
+        .tab-btn-logout:hover { background-color: #2a0808; color: #ff6666; border-color: #ff4d4d; }
+
+        .dashboard-content { flex: 1; background-color: var(--bg-card); border: 1px solid #333; border-radius: 10px; padding: 30px; min-height: 500px; width: 100%; overflow: hidden; }
+        .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #444; }
+        .panel-header h3 { font-size: 1.5rem; text-transform: uppercase; color: var(--accent); }
+        .panel-header p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- CUADRÍCULA ESTILO GOOGLE CALENDAR --- */
+        .agenda-table-wrapper { width: 100%; max-height: 70vh; overflow: auto; background: var(--bg-main); border: 1px solid #444; border-radius: 8px; }
+        .agenda-table-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
+        .agenda-table-wrapper::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+        
+        .agenda-table { width: 100%; min-width: 900px; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+        .agenda-table th, .agenda-table td { border-bottom: 1px solid #333; border-right: 1px solid #333; padding: 0; vertical-align: top; }
+        .agenda-table th:last-child, .agenda-table td:last-child { border-right: none; }
+        
+        .agenda-table th { background: #1a1a1a; padding: 15px 5px; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 #333; }
+        .agenda-table th .day-num { font-size: 1.5rem; color: var(--accent); font-weight: 900; display: block; margin-top: 5px; }
+        
+        .time-cell { width: 65px; text-align: center; vertical-align: middle !important; color: var(--text-muted); font-size: 0.75rem; background: #111; font-weight: 600; padding: 10px 0 !important; position: sticky; left: 0; z-index: 11; box-shadow: 1px 0 0 #333; }
+        .agenda-table th.time-cell { z-index: 15; box-shadow: 1px 1px 0 #333; }
+        
+        .slot-cell { height: 65px; background: var(--bg-main); transition: background 0.3s; position: relative; }
+        .slot-cell:hover { background: #1a1a1a; }
+        
+        /* Celdas Bloqueadas */
+        .slot-cell.blocked { 
+            background-color: #111; 
+            background-image: repeating-linear-gradient(45deg, #1a1a1a 25%, transparent 25%, transparent 75%, #1a1a1a 75%, #1a1a1a), repeating-linear-gradient(45deg, #1a1a1a 25%, transparent 25%, transparent 75%, #1a1a1a 75%, #1a1a1a); 
+            background-position: 0 0, 10px 10px; 
+            background-size: 20px 20px; 
+            opacity: 0.7;
+        }
+
+        .reserva-card { background: rgba(212, 175, 55, 0.15); border-left: 4px solid var(--accent); padding: 8px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; min-height: 55px; animation: fadeIn 0.3s; }
+        .reserva-card h4 { color: var(--text-light); font-size: 0.85rem; margin-bottom: 3px; line-height: 1.2; text-transform: uppercase; }
+        .reserva-card .precio-label { color: var(--accent); font-weight: 900; font-size: 0.9rem; margin-bottom: 5px; }
+        .reserva-card .extra-badge { background: #333; color: #fff; font-size: 0.65rem; padding: 2px 5px; border-radius: 3px; margin-bottom: 4px; display: inline-block; font-weight: 600; }
+        .reserva-card .cliente { font-size: 0.75rem; color: #ccc; }
+        .reserva-card .wa-btn { color: #25D366; font-size: 0.75rem; text-decoration: none; margin-top: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;}
+        
+        .btn-liberar-grid { background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 3px 5px; border-radius: 4px; cursor: pointer; font-size: 0.65rem; transition: 0.3s; margin-top: 5px; text-transform: uppercase; font-weight: bold; width: fit-content; }
+        .btn-liberar-grid:hover { background: #ff4d4d; color: white; }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; background-color: var(--bg-main); border: 1px solid #444; color: white; border-radius: 5px; font-size: 1rem; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+        
+        .btn-submit { width: 100%; padding: 15px; background-color: var(--accent); color: var(--bg-main); font-weight: 800; text-transform: uppercase; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background-color: #fff; }
+
+        .bloqueos-list { margin-top: 30px; border-top: 1px solid #444; padding-top: 20px; }
+        .bloqueo-card { background: #1a1a1a; border: 1px solid #333; padding: 10px 15px; border-radius: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .bloqueo-info { font-size: 0.9rem; color: #ccc; }
+        .btn-cancelar { background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
+        .btn-cancelar:hover { background: #ff4d4d; color: white; }
+        
+        @media (max-width: 900px) {
+            .dashboard-wrapper { flex-direction: column; padding: 0 15px; }
+            .dashboard-sidebar { width: 100%; flex-direction: row; overflow-x: auto; padding-bottom: 10px; }
+            .tab-btn { flex: 1; justify-content: center; min-width: 150px; font-size: 0.9rem; padding: 10px; }
+            .dashboard-content { padding: 15px; }
+            
+            .agenda-table { min-width: 1100px; }
+            .time-cell { width: 50px; font-size: 0.65rem; }
+            .agenda-table th { padding: 10px 2px; font-size: 0.7rem; }
+            .agenda-table th .day-num { font-size: 1.2rem; }
+            
+            .reserva-card { padding: 5px; }
+            .reserva-card h4 { font-size: 0.75rem; margin-bottom: 1px; }
+            .reserva-card .precio-label { font-size: 0.8rem; }
+            .reserva-card .cliente { font-size: 0.65rem; }
+            .reserva-card .wa-btn { font-size: 0.65rem; }
+            .btn-liberar-grid { font-size: 0.6rem; padding: 3px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="CUT AR" class="logo-img">
+            <div class="logo-text">CUT AR <span>PRO</span></div>
+        </a>
+        <a href="index.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver al Inicio</a>
+    </nav>
+
+    <div id="loading-screen" style="height: 80vh; display: flex; align-items: center; justify-content: center; color: white;">
+        <h2>Verificando permisos...</h2>
+    </div>
+
+    <div class="login-screen" id="login-screen">
+        <h2>Acceso de Personal</h2>
+        <p>Inicia sesión con tu cuenta de barbero para administrar tus horas.</p>
+        <button class="btn-submit" id="btn-login" style="max-width: 300px; display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 auto; background-color: var(--text-light); color: var(--bg-main);">
+            <i class="fa-brands fa-google"></i> Iniciar Sesión con Google
+        </button>
+    </div>
+
+    <div class="dashboard-wrapper" id="dashboard-wrapper">
+        
+        <aside class="dashboard-sidebar">
+            <button class="tab-btn active" data-target="tab-agenda"><i class="fa-regular fa-calendar-check"></i> Mi Agenda</button>
+            <button class="tab-btn" data-target="tab-bloqueos"><i class="fa-solid fa-ban"></i> Administrar Bloqueos</button>
+            <button class="tab-btn tab-btn-logout" id="btn-logout-sidebar"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+        </aside>
+
+        <main class="dashboard-content">
+            
+            <div id="tab-agenda" class="tab-panel active">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h3>Mi Agenda (Próximos 7 días)</h3>
+                        <p>Revisa visualmente tus horas ocupadas, disponibles y bloqueadas.</p>
+                    </div>
+                    <button id="btn-actualizar-agenda" class="btn-submit" style="width: auto; margin-top: 0; padding: 10px 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-rotate-right"></i> Actualizar
+                    </button>
+                </div>
+                
+                <div id="agenda-container">
+                    </div>
+            </div>
+
+            <div id="tab-bloqueos" class="tab-panel">
+                <div class="panel-header">
+                    <h3>Bloquear Horarios</h3>
+                    <p>Cierra fechas, días u horas específicas para que los clientes no puedan agendar.</p>
+                </div>
+                
+                <form id="bloqueo-form">
+                    <div class="form-group">
+                        <label>Tipo de Bloqueo</label>
+                        <select id="tipo-bloqueo" required>
+                            <option value="especifico">Fecha Exacta (Ej: Jueves 25 de Abril)</option>
+                            <option value="recurrente_dia">Día Recurrente (Ej: Todos los Lunes)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="group-fecha">
+                        <label>Fecha a bloquear</label>
+                        <input type="date" id="bloqueo-fecha">
+                    </div>
+
+                    <div class="form-group" id="group-dia-semana" style="display: none;">
+                        <label>Día de la semana a bloquear</label>
+                        <select id="bloqueo-dia-semana">
+                            <option value="1">Lunes</option>
+                            <option value="2">Martes</option>
+                            <option value="3">Miércoles</option>
+                            <option value="4">Jueves</option>
+                            <option value="5">Viernes</option>
+                            <option value="6">Sábado</option>
+                            <option value="0">Domingo</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hora a bloquear (Opcional)</label>
+                        <select id="bloqueo-hora">
+                            <option value="">-- Todo el día completo --</option>
+                            <option value="09:00">09:00</option><option value="09:30">09:30</option>
+                            <option value="10:00">10:00</option><option value="10:30">10:30</option>
+                            <option value="11:00">11:00</option><option value="11:30">11:30</option>
+                            <option value="12:00">12:00</option><option value="12:30">12:30</option>
+                            <option value="13:00">13:00</option><option value="13:30">13:30</option>
+                            <option value="15:00">15:00</option><option value="15:30">15:30</option>
+                            <option value="16:00">16:00</option><option value="16:30">16:30</option>
+                            <option value="17:00">17:00</option><option value="17:30">17:30</option>
+                            <option value="18:00">18:00</option><option value="18:30">18:30</option>
+                            <option value="19:00">19:00</option><option value="19:30">19:30</option>
+                            
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btn-guardar-bloqueo">Añadir Bloqueo</button>
+                </form>
+
+                <div class="bloqueos-list">
+                    <h4>Mis Bloqueos Activos</h4>
+                    <div id="bloqueos-container" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabBtns.forEach(btn => {
+            if(btn.id === 'btn-logout-sidebar') return;
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanels.forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.target).classList.add('active');
+            });
+        });
+
+        const tipoBloqueo = document.getElementById('tipo-bloqueo');
+        const groupFecha = document.getElementById('group-fecha');
+        const groupDiaSemana = document.getElementById('group-dia-semana');
+
+        tipoBloqueo.addEventListener('change', (e) => {
+            if(e.target.value === 'especifico') {
+                groupFecha.style.display = 'block';
+                groupDiaSemana.style.display = 'none';
+            } else {
+                groupFecha.style.display = 'none';
+                groupDiaSemana.style.display = 'block';
+            }
+        });
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("bloqueo-fecha").setAttribute('min', today);
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, doc, deleteDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcaFO3N8fePHN0u1Nb7YfkbC48nRQSl9I",
+            authDomain: "cutar-studio.firebaseapp.com",
+            projectId: "cutar-studio",
+            storageBucket: "cutar-studio.firebasestorage.app",
+            messagingSenderId: "18497479294",
+            appId: "1:18497479294:web:8a91d2810b2196bb622e2f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // AQUÍ AGREGAMOS LA URL DE APPS SCRIPT
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwS3awQ_XqSABJ8mgr8W9E45jzKxU5I3IlHUVktxPTb5DlB3p4S_KXQK450Ennt41c53g/exec";
+
+        const correosBarberos = [
+            "alejandro.ar.aaar17@gmail.com",
+            "lucasfernandofernandezsuarez@gmail.com",
+            "genskowski.maxi@gmail.com",
+            "kiing.sando@gmail.com" ,
+            "diegofernandofernanezsuarez7@gmail.com"
+        ];
+
+        let barberoEmailGlobal = "";
+        let reservasGlobal = [];
+        let bloqueosGlobal = [];
+
+        document.getElementById('btn-login').addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch(err => console.error(err));
+        });
+
+        document.getElementById('btn-logout-sidebar').addEventListener('click', () => {
+            signOut(auth).then(() => { window.location.href = 'index.html'; });
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const emailUsuario = user.email.toLowerCase();
+                const listaBarberosMinusculas = correosBarberos.map(e => e.toLowerCase());
+
+                if (listaBarberosMinusculas.includes(emailUsuario)) {
+                    barberoEmailGlobal = emailUsuario;
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('dashboard-wrapper').style.display = 'flex';
+                    
+                    cargarTodo();
+                } else {
+                    alert("Acceso denegado: El correo no es de administrador.");
+                    window.location.href = 'reservas.html';
+                }
+            } else {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('dashboard-wrapper').style.display = 'none';
+                document.getElementById('login-screen').style.display = 'flex';
+            }
+        });
+
+        document.getElementById('btn-actualizar-agenda').addEventListener('click', async (e) => {
+            const icon = e.currentTarget.querySelector('i');
+            icon.classList.add('fa-spin'); 
+            await cargarTodo(); 
+            icon.classList.remove('fa-spin'); 
+        });
+
+        async function cargarTodo() {
+            const container = document.getElementById('agenda-container');
+            container.innerHTML = '<p style="color: var(--text-muted); padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Construyendo calendario...</p>';
+            
+            try {
+                const qRes = query(collection(db, "reservas"), where("barberoEmail", "==", barberoEmailGlobal));
+                const snapRes = await getDocs(qRes);
+                reservasGlobal = [];
+                snapRes.forEach(doc => {
+                    let d = doc.data(); d.id = doc.id; reservasGlobal.push(d);
+                });
+                
+                const qBloq = query(collection(db, "bloqueos"), where("barberoEmail", "==", barberoEmailGlobal));
+                const snapBloq = await getDocs(qBloq);
+                bloqueosGlobal = [];
+                snapBloq.forEach(doc => {
+                    let d = doc.data(); d.id = doc.id; bloqueosGlobal.push(d);
+                });
+
+                dibujarCuadricula();
+                renderBloqueosLista();
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p style="color:red; padding: 20px;">Error al cargar la base de datos.</p>';
+            }
+        }
+
+        function calcularPrecio(servicioStr) {
+            let total = 0;
+            if (servicioStr.includes("Corte")) total += 12000;
+            else if (servicioStr.includes("Corte + Barba")) total += 20000;
+            else if (servicioStr.includes("Corte + Asesoria")) total += 15000;
+            else if (servicioStr.includes("Barba")) total += 10000;
+            else if (servicioStr.includes("Full")) total += 25000;
+
+            if (servicioStr.includes("(+ Diseño $3.000)")) {
+                total += 3000;
+            }
+            return "$" + total.toLocaleString('es-CL');
+        }
+
+        function dibujarCuadricula() {
+            const container = document.getElementById('agenda-container');
+            
+            // AHORA LAS HORAS LLEGAN HASTA LAS 
+            const horasFull = [
+                "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+                "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+                "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", 
+                "18:00", "18:30", "19:00", "19:30"
+            ];
+            
+            const diasSemanaNombres = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+            
+            const next7Days = [];
+            const hoy = new Date();
+            for(let i=0; i<7; i++) {
+                const d = new Date();
+                d.setDate(hoy.getDate() + i);
+                next7Days.push({
+                    fechaStr: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,
+                    diaNum: d.getDay(),
+                    diaNombre: i === 0 ? "Hoy" : (i === 1 ? "Mañana" : diasSemanaNombres[d.getDay()]),
+                    diaCifra: d.getDate()
+                });
+            }
+
+            let gridMap = {};
+            next7Days.forEach(d => gridMap[d.fechaStr] = {});
+
+            next7Days.forEach(day => {
+
+                // NUEVO: Bloquear colación (14:00 y 14:30) para todos los días
+                ["14:00", "14:30"].forEach(h => gridMap[day.fechaStr][h] = { type: 'bloqueo' });
+                
+                // Lunes (1) a Viernes (5): Bloqueamos antes de las 10:00 AM
+                if (day.diaNum >= 1 && day.diaNum <= 5) {
+                    ["09:00", "09:30"].forEach(h => gridMap[day.fechaStr][h] = { type: 'bloqueo' });
+                }
+
+                // Aplicar bloqueos manuales de Firebase
+                bloqueosGlobal.forEach(b => {
+                    const aplicaEspecifico = (b.tipo === "especifico" && b.fecha === day.fechaStr);
+                    const aplicaRecurrente = (b.tipo === "recurrente_dia" && parseInt(b.diaSemana) === day.diaNum);
+
+                    if (aplicaEspecifico || aplicaRecurrente) {
+                        if(b.hora === "Todo el día") {
+                            horasFull.forEach(h => gridMap[day.fechaStr][h] = { type: 'bloqueo' });
+                        } else {
+                            gridMap[day.fechaStr][b.hora] = { type: 'bloqueo' };
+                        }
+                    }
+                });
+            });
+
+            reservasGlobal.forEach(res => {
+                if(gridMap[res.fecha]) {
+                    gridMap[res.fecha][res.hora] = { type: 'reserva', data: res };
+                }
+            });
+
+            let html = `<div class="agenda-table-wrapper"><table class="agenda-table"><thead><tr><th class="time-cell"><i class="fa-regular fa-clock"></i></th>`;
+            
+            next7Days.forEach(d => {
+                html += `<th>${d.diaNombre} <span class="day-num">${d.diaCifra}</span></th>`;
+            });
+            html += `</tr></thead><tbody>`;
+
+            let skipCells = {}; 
+            next7Days.forEach(d => skipCells[d.fechaStr] = 0);
+
+            horasFull.forEach(hora => {
+                html += `<tr><td class="time-cell">${hora}</td>`;
+                
+                next7Days.forEach(day => {
+                    const fStr = day.fechaStr;
+                    
+                    if (skipCells[fStr] > 0) {
+                        skipCells[fStr]--;
+                        return; 
+                    }
+
+                    const slot = gridMap[fStr][hora];
+                    
+                    if (!slot) {
+                        html += `<td class="slot-cell"></td>`; 
+                    } else if (slot.type === 'bloqueo') {
+                        html += `<td class="slot-cell blocked"></td>`; 
+                    } else if (slot.type === 'reserva') {
+                        const r = slot.data;
+                        const rowspan = r.bloques || 1;
+                        if (rowspan > 1) skipCells[fStr] = rowspan - 1; 
+
+                        const tieneExtra = r.servicio.includes("(+ Diseño $3.000)");
+                        const nombreBase = r.servicio.replace(" (+ Diseño $3.000)", "");
+                        const precioTotal = calcularPrecio(r.servicio);
+                        
+                        const extraBadge = tieneExtra ? `<div class="extra-badge"><i class="fa-solid fa-paintbrush"></i> Diseño</div>` : '';
+                        
+                        html += `<td class="slot-cell" rowspan="${rowspan}">
+                            <div class="reserva-card">
+                                <div>
+                                    <h4>${nombreBase}</h4>
+                                    ${extraBadge}
+                                    <div class="precio-label">${precioTotal}</div>
+                                    <div class="cliente"><i class="fa-solid fa-user"></i> ${r.nombre}</div>
+                                    <a href="https://wa.me/${r.telefono.replace('+', '')}" target="_blank" class="wa-btn" onclick="event.stopPropagation()">
+                                        <i class="fa-brands fa-whatsapp"></i> Chat
+                                    </a>
+                                </div>
+                                <button class="btn-liberar-grid" data-id="${r.id}">Liberar</button>
+                            </div>
+                        </td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+            
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+            
+            // ACTUALIZACIÓN DE EVENTO "LIBERAR HORA" PARA AVISAR AL CLIENTE A TRAVÉS DE APPS SCRIPT
+            document.querySelectorAll('.btn-liberar-grid').forEach(btn => {
+                 btn.addEventListener('click', async (e) => {
+                     const docId = e.currentTarget.getAttribute('data-id');
+                     
+                     // Encontramos los datos de la reserva que estamos borrando en el array global
+                     const r = reservasGlobal.find(res => res.id === docId);
+
+                     if(confirm('¿Seguro que deseas cancelar esta reserva? El cliente perderá su hora y se le enviará un correo de aviso.')) {
+                         e.currentTarget.textContent = "Borrando...";
+                         try {
+                             // 1. Avisarle a Apps Script para que avise al cliente y detenga el recordatorio
+                             if(r) {
+                                 fetch(APPS_SCRIPT_URL, {
+                                     method: "POST", mode: "no-cors",
+                                     headers: { "Content-Type": "application/json" },
+                                     body: JSON.stringify({
+                                         action: "cancelar_barbero",
+                                         idReserva: docId,
+                                         emailCliente: r.emailCliente,
+                                         nombre: r.nombre,
+                                         barbero: r.barbero,
+                                         fecha: r.fecha,
+                                         hora: r.hora,
+                                         servicio: r.servicio
+                                     })
+                                 }).catch(err => console.error(err));
+                             }
+
+                             // 2. Borrar de Firebase
+                             await deleteDoc(doc(db, "reservas", docId));
+                             cargarTodo(); 
+                         } catch (err) {
+                             console.error("Error al cancelar:", err);
+                         }
+                     }
+                 });
+            });
+        }
+
+        function renderBloqueosLista() {
+            const container = document.getElementById('bloqueos-container');
+            const diasNombres = {"0":"Domingos", "1":"Lunes", "2":"Martes", "3":"Miércoles", "4":"Jueves", "5":"Viernes", "6":"Sábados"};
+
+            if (bloqueosGlobal.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); font-style:italic;">No tienes bloqueos activos.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            bloqueosGlobal.forEach(b => {
+                let textoBloqueo = "";
+                if(b.tipo === "especifico") {
+                    const f = b.fecha.split('-').reverse().join('/');
+                    textoBloqueo = `Fecha: <strong>${f}</strong>`;
+                } else {
+                    textoBloqueo = `Día: <strong>Todos los ${diasNombres[b.diaSemana]}</strong>`;
+                }
+
+                const textoHora = b.hora === "Todo el día" ? "Todo el día" : `Hora: ${b.hora} hrs`;
+
+                const div = document.createElement('div');
+                div.className = 'bloqueo-card';
+                div.innerHTML = `
+                    <div class="bloqueo-info">${textoBloqueo} | ${textoHora}</div>
+                    <button class="btn-cancelar btn-borrar-bloqueo" data-id="${b.id}"><i class="fa-solid fa-trash"></i></button>
+                `;
+                container.appendChild(div);
+            });
+
+            document.querySelectorAll('.btn-borrar-bloqueo').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const docId = e.currentTarget.getAttribute('data-id');
+                    if(confirm('¿Eliminar este bloqueo? El horario volverá a estar disponible.')) {
+                        await deleteDoc(doc(db, "bloqueos", docId));
+                        cargarTodo();
+                    }
+                });
+            });
+        }
+
+        document.getElementById('bloqueo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-guardar-bloqueo');
+            btn.textContent = 'Guardando...'; btn.disabled = true;
+
+            const tipo = document.getElementById('tipo-bloqueo').value;
+            const hora = document.getElementById('bloqueo-hora').value;
+            let fecha = null;
+            let diaSemana = null;
+
+            if (tipo === 'especifico') {
+                fecha = document.getElementById('bloqueo-fecha').value;
+                if(!fecha) { alert("Elige una fecha."); btn.textContent = 'Añadir Bloqueo'; btn.disabled = false; return; }
+            } else {
+                diaSemana = document.getElementById('bloqueo-dia-semana').value;
+            }
+
+            try {
+                await addDoc(collection(db, "bloqueos"), {
+                    barberoEmail: barberoEmailGlobal,
+                    tipo: tipo,
+                    fecha: fecha,
+                    diaSemana: diaSemana,
+                    hora: hora || "Todo el día"
+                });
+
+                document.getElementById('bloqueo-form').reset();
+                cargarTodo(); 
+            } catch(e) {
+                console.error(e); alert("Error al guardar bloqueo.");
+            }
+            btn.textContent = 'Añadir Bloqueo'; btn.disabled = false;
+        });
+
+    </script>
+</body>
+</html>
