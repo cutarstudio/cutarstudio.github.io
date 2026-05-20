@@ -358,17 +358,43 @@
         }
 
         function calcularPrecio(servicioStr) {
-            let total = 0;
-            if (servicioStr.includes("Corte")) total += 12000;
-            else if (servicioStr.includes("Corte + Barba")) total += 20000;
-            else if (servicioStr.includes("Corte + Asesoria")) total += 15000;
-            else if (servicioStr.includes("Barba")) total += 10000;
-            else if (servicioStr.includes("Full")) total += 25000;
+            let base = 0;
+            
+            // Barbería
+            if (servicioStr.includes("Corte + Barba")) base = 20000;
+            else if (servicioStr.includes("Corte + Asesoria")) base = 15000;
+            else if (servicioStr.includes("Corte")) base = 12000;
+            else if (servicioStr.includes("Barba")) base = 10000;
+            else if (servicioStr.includes("Full")) base = 25000;
+            
+            // Peluquería: Alisados
+            else if (servicioStr.includes("Alisado orgánico - Corto")) base = 50000;
+            else if (servicioStr.includes("Alisado orgánico - Medio")) base = 60000;
+            else if (servicioStr.includes("Alisado orgánico - Largo")) base = 70000;
+            
+            // Peluquería: Botox
+            else if (servicioStr.includes("Botox capilar - Corto")) base = 25000;
+            else if (servicioStr.includes("Botox capilar - Medio")) base = 35000;
+            else if (servicioStr.includes("Botox capilar - Largo")) base = 50000;
+            
+            // Peluquería: Hidratación
+            else if (servicioStr.includes("Hidratación capilar - Corto")) base = 15000;
+            else if (servicioStr.includes("Hidratación capilar - Medio")) base = 20000;
+            else if (servicioStr.includes("Hidratación capilar - Largo")) base = 30000;
+            
+            // Peluquería: Depilación
+            else if (servicioStr.includes("Depilación facial - Bozo")) base = 3000;
+            else if (servicioStr.includes("Depilación facial - Cejas")) base = 5000;
+            else if (servicioStr.includes("Depilación facial - Patillas")) base = 4000;
+            else if (servicioStr.includes("Depilación facial - Mentón")) base = 3000;
+            else if (servicioStr.includes("Depilación facial - Completa")) base = 13000;
 
+            // Extra
             if (servicioStr.includes("(+ Diseño $3.000)")) {
-                total += 3000;
+                base += 3000;
             }
-            return "$" + total.toLocaleString('es-CL');
+            
+            return "$" + base.toLocaleString('es-CL');
         }
 
         function dibujarCuadricula() {
