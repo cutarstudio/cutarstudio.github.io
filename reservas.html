@@ -199,34 +199,41 @@
                     </div>
 
                     <div class="form-group">
-                        <label>1. Selecciona tu Barbero</label>
+                        <label>1. Selecciona tu Barbero o Peluquera</label>
                         <div class="barber-cards-container">
-                            <div class="barber-card" data-id="Alejandro" data-email="alejandro.ar.aaar17@gmail.com">
+                            <div class="barber-card" data-id="Alejandro" data-email="alejandro.ar.aaar17@gmail.com" data-type="barbero">
                                 <img src="img/alejandro.JPG" alt="Alejandro">
                                 <h4>Alejandro</h4>
                                 <a href="https://wa.me/56934177249" class="wa-link" target="_blank" onclick="event.stopPropagation()">
                                     <i class="fa-brands fa-whatsapp"></i> +569 3417 7249
                                 </a>
                             </div>
-                            <div class="barber-card" data-id="Lucas" data-email="lucasfernandofernandezsuarez@gmail.com">
+                            <div class="barber-card" data-id="Lucas" data-email="lucasfernandofernandezsuarez@gmail.com" data-type="barbero">
                                 <img src="img/lucas.JPG" alt="Lucas">
                                 <h4>Lucas</h4>
                                 <a href="https://wa.me/59176176633" class="wa-link" target="_blank" onclick="event.stopPropagation()">
                                     <i class="fa-brands fa-whatsapp"></i> +591 7617 6633
                                 </a>
                             </div>
-                            <div class="barber-card" data-id="Sando" data-email="kiing.sando@gmail.com">
+                            <div class="barber-card" data-id="Sando" data-email="kiing.sando@gmail.com" data-type="barbero">
                                 <img src="img/sando.JPG" alt="Sando">
                                 <h4>Sando</h4>
                                 <a href="https://wa.me/56971545165" class="wa-link" target="_blank" onclick="event.stopPropagation()">
                                     <i class="fa-brands fa-whatsapp"></i> +569 7154 5165
                                 </a>
                             </div>
-                            <div class="barber-card" data-id="Diego" data-email="diegofernandofernanezsuarez7@gmail.com">
+                            <div class="barber-card" data-id="Diego" data-email="diegofernandofernanezsuarez7@gmail.com" data-type="barbero">
                                 <img src="img/diego.JPG" alt="Diego">
                                 <h4>Diego</h4>
                                 <a href="https://wa.me/56946240279" class="wa-link" target="_blank" onclick="event.stopPropagation()">
                                     <i class="fa-brands fa-whatsapp"></i> +569 4624 0279
+                                </a>
+                            </div>
+                            <div class="barber-card" data-id="Milagro" data-email="vacayepezm@gmail.com" data-type="peluquera">
+                                <img src="img/milagro.JPG" alt="Milagro">
+                                <h4>Milagro</h4>
+                                <a href="https://wa.me/56936941751" class="wa-link" target="_blank" onclick="event.stopPropagation()">
+                                    <i class="fa-brands fa-whatsapp"></i> +569 3694 1751
                                 </a>
                             </div>
                         </div>
@@ -239,35 +246,123 @@
                         <div class="form-group">
                             <label>2. Selecciona un Servicio</label>
                             <div class="service-cards-container">
-                                <div class="service-card" data-value="Corte" data-blocks="1">
+                                <div class="service-card service-barbero" data-value="Corte" data-blocks="1">
                                     <h4>Corte</h4>
                                     <div class="price">$12.000</div>
                                     <p class="desc">Corte tradicional, degradado, fade, etc. adaptado a tu estilo personal. Incluye lineas y perfilado de cejas, si lo desea.</p>
                                     <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
                                 </div>
-                                <div class="service-card" data-value="Barba" data-blocks="1">
+                                <div class="service-card service-barbero" data-value="Barba" data-blocks="1">
                                     <h4>Perfilado de Barba</h4>
                                     <div class="price">$10.000</div>
                                     <p class="desc">Perfilado y corte de barba, alineación precisa con navaja y aceites.</p>
                                     <div class="duration"><i class="fa-regular fa-clock"></i> 15 min</div>
                                 </div>
-                                <div class="service-card" data-value="Corte + Barba" data-blocks="2">
+                                <div class="service-card service-barbero" data-value="Corte + Barba" data-blocks="2">
                                     <h4>Corte + Barba</h4>
                                     <div class="price">$20.000</div>
                                     <p class="desc">La experiencia clásica completa para el cuidado de tu cabello y barba.</p>
                                     <div class="duration"><i class="fa-regular fa-clock"></i> 45 min</div>
                                 </div>
-                                <div class="service-card" data-value="Corte + Asesoria" data-blocks="1">
+                                <div class="service-card service-barbero" data-value="Corte + Asesoria" data-blocks="1">
                                     <h4>Corte + Asesoria</h4>
                                     <div class="price">$15.000</div>
                                     <p class="desc">La experiencia de un Corte sumado a una Asesoria profesional.</p>
                                     <div class="duration"><i class="fa-regular fa-clock"></i> 40 min</div>
                                 </div>
-                                <div class="service-card" data-value="Full" data-blocks="2">
+                                <div class="service-card service-barbero" data-value="Full" data-blocks="2">
                                     <h4>Full Premium Experience</h4>
                                     <div class="price">$25.000</div>
                                     <p class="desc">Experiencia Completa, Asesoria profesional + Corte + Perfilado y Corte de Barba + Lavado y peinado final.</p>
                                     <div class="duration"><i class="fa-regular fa-clock"></i> 1 hr</div>
+                                </div>
+                                
+                                <div class="service-card service-peluquera" data-value="Alisado orgánico - Corto" data-blocks="4" style="display: none;">
+                                    <h4>Alisado Orgánico (Corto)</h4>
+                                    <div class="price">$50.000</div>
+                                    <p class="desc">Alisado orgánico para cabello corto.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 2 hrs</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Alisado orgánico - Medio" data-blocks="4" style="display: none;">
+                                    <h4>Alisado Orgánico (Medio)</h4>
+                                    <div class="price">$60.000</div>
+                                    <p class="desc">Alisado orgánico para cabello medio.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 2 hrs</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Alisado orgánico - Largo" data-blocks="4" style="display: none;">
+                                    <h4>Alisado Orgánico (Largo)</h4>
+                                    <div class="price">$70.000</div>
+                                    <p class="desc">Alisado orgánico para cabello largo.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 2 hrs</div>
+                                </div>
+                            
+                                <div class="service-card service-peluquera" data-value="Botox capilar - Corto" data-blocks="3" style="display: none;">
+                                    <h4>Botox Capilar (Corto)</h4>
+                                    <div class="price">$25.000</div>
+                                    <p class="desc">Incluye lavado premium, sellado con plancha, corte de puntas, peinado final y productos.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 1:30 hrs</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Botox capilar - Medio" data-blocks="3" style="display: none;">
+                                    <h4>Botox Capilar (Medio)</h4>
+                                    <div class="price">$35.000</div>
+                                    <p class="desc">Incluye lavado premium, sellado con plancha, corte de puntas, peinado final y productos.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 1:30 hrs</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Botox capilar - Largo" data-blocks="3" style="display: none;">
+                                    <h4>Botox Capilar (Largo)</h4>
+                                    <div class="price">$50.000</div>
+                                    <p class="desc">Incluye lavado premium, sellado con plancha, corte de puntas, peinado final y productos.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 1:30 hrs</div>
+                                </div>
+                            
+                                <div class="service-card service-peluquera" data-value="Hidratación capilar - Corto" data-blocks="1" style="display: none;">
+                                    <h4>Hidratación Capilar (Corto)</h4>
+                                    <div class="price">$15.000</div>
+                                    <p class="desc">Tratamiento de hidratación para cabello corto.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Hidratación capilar - Medio" data-blocks="1" style="display: none;">
+                                    <h4>Hidratación Capilar (Medio)</h4>
+                                    <div class="price">$20.000</div>
+                                    <p class="desc">Tratamiento de hidratación para cabello medio.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Hidratación capilar - Largo" data-blocks="1" style="display: none;">
+                                    <h4>Hidratación Capilar (Largo)</h4>
+                                    <div class="price">$30.000</div>
+                                    <p class="desc">Tratamiento de hidratación para cabello largo.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
+                                </div>
+                            
+                                <div class="service-card service-peluquera" data-value="Depilación facial - Bozo" data-blocks="1" style="display: none;">
+                                    <h4>Depilación - Bozo</h4>
+                                    <div class="price">$3.000</div>
+                                    <p class="desc">Depilación facial zona bozo.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Depilación facial - Cejas" data-blocks="1" style="display: none;">
+                                    <h4>Depilación - Cejas Limpieza</h4>
+                                    <div class="price">$5.000</div>
+                                    <p class="desc">Limpieza y perfilado de cejas.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Depilación facial - Patillas" data-blocks="1" style="display: none;">
+                                    <h4>Depilación - Patillas</h4>
+                                    <div class="price">$4.000</div>
+                                    <p class="desc">Depilación facial zona patillas.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Depilación facial - Mentón" data-blocks="1" style="display: none;">
+                                    <h4>Depilación - Mentón</h4>
+                                    <div class="price">$3.000</div>
+                                    <p class="desc">Depilación facial zona mentón.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
+                                </div>
+                                <div class="service-card service-peluquera" data-value="Depilación facial - Completa" data-blocks="1" style="display: none;">
+                                    <h4>Depilación - Completa</h4>
+                                    <div class="price">$13.000</div>
+                                    <p class="desc">Depilación facial rostro completo.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 30 min</div>
                                 </div>
                             </div>
                             
@@ -511,10 +606,28 @@
                 
                 const barberoNombre = card.getAttribute('data-id');
                 const barberoEmail = card.getAttribute('data-email');
+                const tipoEmpleado = card.getAttribute('data-type');
+                
                 barberoInput.value = barberoNombre;
                 barberoEmailInput.value = barberoEmail;
                 
-                serviceCards.forEach(c => c.classList.remove('selected'));
+                serviceCards.forEach(sCard => {
+                    sCard.classList.remove('selected');
+                    if (sCard.classList.contains('service-' + tipoEmpleado)) {
+                        sCard.style.display = 'flex';
+                    } else {
+                        sCard.style.display = 'none';
+                    }
+                });
+
+                const extraBox = document.querySelector('.extra-box');
+                if (tipoEmpleado === 'peluquera') {
+                    extraBox.style.display = 'none';
+                    extraDisenoCheckbox.checked = false;
+                } else {
+                    extraBox.style.display = 'block';
+                }
+                
                 servicioInput.value = "";
                 servicioBloquesInput.value = "";
                 extraDisenoCheckbox.checked = false; 
@@ -573,8 +686,12 @@
                     if(!bookedSlots[data.fecha]) bookedSlots[data.fecha] = [];
                     bookedSlots[data.fecha].push(data.hora);
                     
-                    if(data.bloques === 2) {
-                        bookedSlots[data.fecha].push(getNextSlot(data.hora));
+                    let nextHour = data.hora;
+                    if(data.bloques > 1) {
+                        for(let i = 1; i < data.bloques; i++){
+                            nextHour = getNextSlot(nextHour);
+                            bookedSlots[data.fecha].push(nextHour);
+                        }
                     }
                 });
             } catch(e) { console.error("Error trayendo reservas", e); }
@@ -624,7 +741,6 @@
                 let isDisabled = false;
 
                 const ocupadasHoy = bookedSlots[fechaStr] || [];
-                // Si es domingo (0) o sábado (6), usa el horario de fin de semana
                 const horasDelDia = (diaSemanaNum === 0 || diaSemanaNum === 6) ? horasFinde : horasSemana;
                 let horasNoDisponibles = 0;
                     
@@ -663,7 +779,6 @@
             const container = document.getElementById('time-slots-container');
             container.innerHTML = '';
 
-            // Si es domingo o sábado, usar horario de finde
             const horasArray = (diaSemanaNum === 0 || diaSemanaNum === 6) ? horasFinde : horasSemana;
             const ocupadasHoy = bookedSlots[fechaStr] || [];
             
@@ -691,10 +806,14 @@
 
                 let hasEnoughTime = true;
 
-                if(bloquesNecesarios === 2) {
-                    const nextHora = getNextSlot(hora);
-                    if (!horasArray.includes(nextHora) || isHoraOcupadaOBloqueada(fechaStr, diaSemanaNum, nextHora, ocupadasHoy)) {
-                        hasEnoughTime = false;
+                if(bloquesNecesarios > 1) {
+                    let horaSiguienteIteracion = hora;
+                    for(let i = 1; i < bloquesNecesarios; i++) {
+                        horaSiguienteIteracion = getNextSlot(horaSiguienteIteracion);
+                        if (!horasArray.includes(horaSiguienteIteracion) || isHoraOcupadaOBloqueada(fechaStr, diaSemanaNum, horaSiguienteIteracion, ocupadasHoy)) {
+                            hasEnoughTime = false;
+                            break;
+                        }
                     }
                 }
 
@@ -766,7 +885,13 @@
                 let ocupadasTemp = [];
                 checkSnap.forEach(d => {
                     ocupadasTemp.push(d.data().hora);
-                    if(d.data().bloques === 2) ocupadasTemp.push(getNextSlot(d.data().hora));
+                    let nextHour = d.data().hora;
+                    if(d.data().bloques > 1) {
+                        for(let i = 1; i < d.data().bloques; i++){
+                            nextHour = getNextSlot(nextHour);
+                            ocupadasTemp.push(nextHour);
+                        }
+                    }
                 });
                 
                 const qBloq = query(collection(db, "bloqueos"), where("barberoEmail", "==", barberoEmailVal));
@@ -778,8 +903,16 @@
                 const diaValNum = new Date(y, m-1, d).getDay();
                 
                 let choque = isHoraOcupadaOBloqueada(fechaVal, diaValNum, horaVal, ocupadasTemp);
-                if (bloquesVal === 2 && isHoraOcupadaOBloqueada(fechaVal, diaValNum, getNextSlot(horaVal), ocupadasTemp)) {
-                    choque = true;
+                
+                if (!choque && bloquesVal > 1) {
+                    let horaSiguienteIteracion = horaVal;
+                    for(let i = 1; i < bloquesVal; i++) {
+                        horaSiguienteIteracion = getNextSlot(horaSiguienteIteracion);
+                        if (isHoraOcupadaOBloqueada(fechaVal, diaValNum, horaSiguienteIteracion, ocupadasTemp)) {
+                            choque = true;
+                            break;
+                        }
+                    }
                 }
 
                 if (choque) {
@@ -794,7 +927,6 @@
                     return; 
                 }
 
-                // Se guarda en Firebase y capturamos el ID en "docRef"
                 const docRef = await addDoc(collection(db, "reservas"), {
                     nombre: document.getElementById('nombre').value, 
                     telefono: document.getElementById('telefono').value, 
@@ -809,9 +941,6 @@
                     timestamp: new Date()
                 });
 
-                // =========================================================
-                // NUEVO CÓDIGO: Enviar datos a Google Apps Script
-                // =========================================================
                 const payloadAppsScript = {
                     action: "agendar",
                     idReserva: docRef.id,
@@ -833,7 +962,6 @@
                     },
                     body: JSON.stringify(payloadAppsScript)
                 }).catch(err => console.error("Error notificando a Apps Script:", err));
-                // =========================================================
 
                 successMsg.style.display = 'block';
                 document.getElementById('booking-form').reset();
@@ -864,19 +992,44 @@
         /* ==============================
            4. RENDERIZAR "MIS HORAS" CON PRECIO TOTAL
         ============================== */
-        // Función auxiliar para calcular el precio
         function calcularPrecio(servicioStr) {
-            let total = 0;
-            if (servicioStr.includes("Corte")) total += 12000;
-            else if (servicioStr.includes("Corte + Barba")) total += 20000;
-            else if (servicioStr.includes("Corte + Asesoria")) total += 15000;
-            else if (servicioStr.includes("Barba")) total += 10000;
-            else if (servicioStr.includes("Full")) total += 25000;
+            let base = 0;
+            
+            // Barbería
+            if (servicioStr.includes("Corte + Barba")) base = 20000;
+            else if (servicioStr.includes("Corte + Asesoria")) base = 15000;
+            else if (servicioStr.includes("Corte")) base = 12000;
+            else if (servicioStr.includes("Barba")) base = 10000;
+            else if (servicioStr.includes("Full")) base = 25000;
+            
+            // Peluquería: Alisados
+            else if (servicioStr.includes("Alisado orgánico - Corto")) base = 50000;
+            else if (servicioStr.includes("Alisado orgánico - Medio")) base = 60000;
+            else if (servicioStr.includes("Alisado orgánico - Largo")) base = 70000;
+            
+            // Peluquería: Botox
+            else if (servicioStr.includes("Botox capilar - Corto")) base = 25000;
+            else if (servicioStr.includes("Botox capilar - Medio")) base = 35000;
+            else if (servicioStr.includes("Botox capilar - Largo")) base = 50000;
+            
+            // Peluquería: Hidratación
+            else if (servicioStr.includes("Hidratación capilar - Corto")) base = 15000;
+            else if (servicioStr.includes("Hidratación capilar - Medio")) base = 20000;
+            else if (servicioStr.includes("Hidratación capilar - Largo")) base = 30000;
+            
+            // Peluquería: Depilación
+            else if (servicioStr.includes("Depilación facial - Bozo")) base = 3000;
+            else if (servicioStr.includes("Depilación facial - Cejas")) base = 5000;
+            else if (servicioStr.includes("Depilación facial - Patillas")) base = 4000;
+            else if (servicioStr.includes("Depilación facial - Mentón")) base = 3000;
+            else if (servicioStr.includes("Depilación facial - Completa")) base = 13000;
 
+            // Extra
             if (servicioStr.includes("(+ Diseño $3.000)")) {
-                total += 3000;
+                base += 3000;
             }
-            return "$" + total.toLocaleString('es-CL');
+            
+            return "$" + base.toLocaleString('es-CL');
         }
 
         async function cargarMisHoras(uid) {
@@ -905,7 +1058,6 @@
                 reservas.forEach(res => {
                     const fechaLatina = res.fecha.split('-').reverse().join('/');
                     
-                    // Calcular el precio y el badge de diseño
                     const precioTotal = calcularPrecio(res.servicio);
                     const nombreBase = res.servicio.replace(" (+ Diseño $3.000)", "");
                     const tieneExtra = res.servicio.includes("(+ Diseño $3.000)");
@@ -919,7 +1071,7 @@
                             <h4>${nombreBase}</h4>
                             ${extraBadge}
                             <div class="reserva-precio">${precioTotal}</div>
-                            <p><i class="fa-solid fa-scissors"></i> Barbero: <strong>${res.barbero}</strong></p>
+                            <p><i class="fa-solid fa-scissors"></i> Profesional: <strong>${res.barbero}</strong></p>
                         </div>
                         <div class="appointment-date">
                             <div style="display:flex; gap:10px; align-items:center; margin-bottom: 5px;">
@@ -936,13 +1088,11 @@
                     btn.addEventListener('click', async (e) => {
                         const docId = e.target.getAttribute('data-id');
                         
-                        // Extraemos la reserva específica antes de borrarla
                         const r = reservas.find(res => res.id === docId);
 
                         if(confirm('¿Estás seguro que deseas cancelar tu reserva? Esto liberará la hora para otro cliente.')) {
                             e.target.textContent = "Cancelando...";
                             try {
-                                // 1. Avisarle al Backend que cambie a "CANCELADO" y envíe email al barbero
                                 if(r) {
                                     fetch(APPS_SCRIPT_URL, {
                                         method: "POST", mode: "no-cors",
@@ -960,7 +1110,6 @@
                                     }).catch(err => console.error(err));
                                 }
 
-                                // 2. Borrar de Firebase
                                 await deleteDoc(doc(db, "reservas", docId));
                                 cargarMisHoras(uid); 
                             } catch(err) {
