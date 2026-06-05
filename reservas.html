@@ -276,7 +276,12 @@
                                     <p class="desc">Experiencia Completa, Asesoria profesional + Corte + Perfilado y Corte de Barba + Lavado y peinado final.</p>
                                     <div class="duration"><i class="fa-regular fa-clock"></i> 1 hr</div>
                                 </div>
-                                
+                                <div class="service-card service-peluquera" data-value="Manicure" data-blocks="2" style="display: none;">
+                                    <h4>Manicure</h4>
+                                    <div class="price">Desde $15.000</div>
+                                    <p class="desc">Manicure de uñas personalizado.</p>
+                                    <div class="duration"><i class="fa-regular fa-clock"></i> 1 hr</div>
+                                </div>
                                 <div class="service-card service-peluquera" data-value="Alisado orgánico - Corto" data-blocks="4" style="display: none;">
                                     <h4>Alisado Orgánico (Corto)</h4>
                                     <div class="price">$50.000</div>
@@ -1001,7 +1006,10 @@
             else if (servicioStr.includes("Corte")) base = 12000;
             else if (servicioStr.includes("Barba")) base = 10000;
             else if (servicioStr.includes("Full")) base = 25000;
-            
+                
+            // Peluquería: Alisados
+            else if (servicioStr.includes("Manicure")) base = 15000;
+                
             // Peluquería: Alisados
             else if (servicioStr.includes("Alisado orgánico - Corto")) base = 50000;
             else if (servicioStr.includes("Alisado orgánico - Medio")) base = 60000;
